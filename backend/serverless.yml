@@ -1,0 +1,87 @@
+# service: fastapi-products-api
+
+# provider:
+#   name: aws
+#   runtime: python3.10
+#   region: ap-south-1
+#   memorySize: 512
+#   timeout: 30
+#   environment:
+#     DB_HOST: database-1.crwq6am4umr2.ap-south-1.rds.amazonaws.com
+#     DB_NAME: database-1
+#     DB_USER: postgres
+#     DB_PASS: Inventory123*
+
+# functions:
+#   api:
+#     handler: app.main.handler
+#     events:
+#       - httpApi:
+#           path: /api/products
+#           method: get
+#       - httpApi:
+#           path: /api/products
+#           method: post
+#       - httpApi:
+#           path: /api/products/{product_id}
+#           method: put
+#       - httpApi:
+#           path: /api/products/{product_id}
+#           method: delete
+#       - httpApi:
+#           path: /api/products/summary
+#           method: get
+
+# package:
+#   include:
+#     - app/**
+#     - app/main.py
+#   exclude:
+#     - node_modules/**
+#     - __pycache__/**
+
+service: fastapi-products-api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: ap-south-1
+  memorySize: 512
+  timeout: 30
+  environment:
+    DB_HOST: database-1.crwq6am4umr2.ap-south-1.rds.amazonaws.com
+    DB_NAME: database-1
+    DB_USER: postgres
+    DB_PASS: Inventory123*
+
+package:
+  individually: false
+  patterns:
+    - "app.py"
+    - "main.py"
+    - "routers/**"
+    - "database/**"
+    - "models/**"
+    - "schemas/**"
+    - "utils/**"
+    - "requirements.txt"
+    - "!node_modules/**"
+    - "!tests/**"
+
+
+functions:
+  api:
+    handler: app.main.handler
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - httpApi: "*"
+
+layers:
+  pythonRequirements:
+    path: .serverless/deps
+    compatibleRuntimes:
+      - python3.10
+    name: python-deps-${sls:stage}
+
