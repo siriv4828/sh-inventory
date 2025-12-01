@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, Paper } from "@mui/material";
-import ProductList from "../components/ProductList";
+// import ProductList from "../components/ProductList";
 import { getSummary } from "../api";
 
 export function Dashboard() {

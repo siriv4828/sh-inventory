@@ -59,6 +59,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
 def products_summary(db: Session = Depends(get_db)):
     total_count = db.query(func.sum(Products.quantity)).scalar() or 0
     total_value = db.query(func.sum(Products.quantity * Products.price)).scalar() or 0.0
+    print(f"Total Count: {total_count}, Total Value: {total_value}")
     return {"total_count": int(total_count), "total_value": float(total_value)}
 
 # Lambda Handler
