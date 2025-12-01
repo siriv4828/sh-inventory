@@ -28,6 +28,7 @@ export function Dashboard() {
       <Typography variant="h4" gutterBottom>
         📊 Dashboard
       </Typography>
+      <Typography variant="body1" gutterBottom>Hello</Typography>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={6}>
