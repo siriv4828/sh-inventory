@@ -33,6 +33,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
         quantity=product.quantity,
         price=product.price
     )
+    print(f"Creating product: {new_product.name}, Quantity: {new_product.quantity}, Price: {new_product.price}")
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
