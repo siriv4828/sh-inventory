@@ -21,6 +21,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Fix Python Alias
+        run: |
+          sudo ln -s /usr/bin/python3.11 /usr/local/bin/python3 || true
+          python3 --version
+
       - name: Install Docker 
         uses: docker/setup-buildx-action@v2
 
