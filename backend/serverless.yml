@@ -42,7 +42,7 @@ custom:
       - "**/*.py[c|o]"
       - "**/__pycache__*"
       - "**/.git/**"
-    zip: false
+    zip: true
     useDownloadCache: false
     useStaticCache: false
     noDeploy:
