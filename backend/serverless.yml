@@ -35,7 +35,7 @@ plugins:
 
 custom:
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: false
     layer: false
     slim: true
     slimPatterns:
