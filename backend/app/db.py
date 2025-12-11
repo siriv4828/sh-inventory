@@ -19,3 +19,13 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# Create tables automatically on cold start (convenience for development).
+# If the DB is unreachable at import time, catch and log the error so Lambda
+# initialization doesn't fail outright.
+try:
+    from .models import Base
+    Base.metadata.create_all(bind=engine)
+except Exception as _e:
+    print(f"Warning: could not create tables at startup: {_e}")

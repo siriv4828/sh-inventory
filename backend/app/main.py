@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from mangum import Mangum
 from sqlalchemy import func
@@ -8,6 +9,15 @@ from .models import Products
 from .schemas import ProductCreate
 
 app = FastAPI()
+
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://ele-inventory-app.s3-website.ap-south-1.amazonaws.com"],  # or ["*"] for quick testing
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 🟩 Get All Products
 @app.get("/api/products")

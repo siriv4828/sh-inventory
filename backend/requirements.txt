@@ -3,4 +3,4 @@ mangum
 uvicorn
 psycopg2-binary
 sqlalchemy
-pydantic
+pydantic==1.10.12
