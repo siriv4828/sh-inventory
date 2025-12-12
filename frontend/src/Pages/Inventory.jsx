@@ -44,7 +44,7 @@ export default function Inventory() {
           {products.map((p) => (
             <Grid item xs={12} sm={6} md={4} key={p.id}>
               <Paper sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography >{p.name}</Typography>
+                <Typography >{p.name}s</Typography><br/>
                 <Typography sx={{ fontWeight: 600 }}>{Number(p.quantity || 0)}</Typography>
               </Paper>
             </Grid>
