@@ -8,6 +8,22 @@ provider:
   memorySize: 512
   timeout: 30
 
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://d11ll76vikdfdn.cloudfront.net
+        - http://localhost:3000
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowCredentials: true
+      
   environment:
     DB_HOST: database-1.crwq6am4umr2.ap-south-1.rds.amazonaws.com
     DB_NAME: postgres

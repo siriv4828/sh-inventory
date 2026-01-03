@@ -186,7 +186,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/fastapi-products-api/dev/1767447852538-2026-01-03T13:44:12.538Z/fastapi-products-api.zip"
+          "S3Key": "serverless/fastapi-products-api/dev/1767450170189-2026-01-03T14:22:50.189Z/fastapi-products-api.zip"
         },
         "Handler": "app.main.handler",
         "Runtime": "python3.10",
@@ -221,21 +221,39 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionco6GtmbJIodGnM7W1uQp2wsh5ffFVvyVqtKfHhbmdU": {
+    "ApiLambdaVersionrycR5aOciJ9FooOVA9GmwOdQOfXMTpm6IB5POi5rsYE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "79ZlQDWoMj095WjRoJC9fWzMZUNKioYKI32npQP4M+E="
+        "CodeSha256": "bzIygMJzYfs2gFLr7R5kzwBW2bLK8Yp38vGAN8bDSVk="
       }
     },
     "HttpApi": {
       "Type": "AWS::ApiGatewayV2::Api",
       "Properties": {
         "Name": "dev-fastapi-products-api",
-        "ProtocolType": "HTTP"
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowCredentials": true,
+          "AllowHeaders": [
+            "Content-Type",
+            "Authorization"
+          ],
+          "AllowMethods": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "OPTIONS"
+          ],
+          "AllowOrigins": [
+            "https://d11ll76vikdfdn.cloudfront.net",
+            "http://localhost:3000"
+          ]
+        }
       }
     },
     "HttpApiStage": {
@@ -339,7 +357,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionco6GtmbJIodGnM7W1uQp2wsh5ffFVvyVqtKfHhbmdU"
+        "Ref": "ApiLambdaVersionrycR5aOciJ9FooOVA9GmwOdQOfXMTpm6IB5POi5rsYE"
       },
       "Export": {
         "Name": "sls-fastapi-products-api-dev-ApiLambdaFunctionQualifiedArn"

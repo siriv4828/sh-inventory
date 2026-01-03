@@ -19,7 +19,7 @@ app = FastAPI()
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["d11ll76vikdfdn.cloudfront.net"],  # or ["*"] for quick testing
+    allow_origins=["https://d11ll76vikdfdn.cloudfront.net"],  # or ["*"] for quick testing
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
