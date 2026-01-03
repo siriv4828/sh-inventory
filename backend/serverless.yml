@@ -3,21 +3,24 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: python3.11
+  runtime: python3.10
   region: ap-south-1
   memorySize: 512
   timeout: 30
+
   environment:
     DB_HOST: database-1.crwq6am4umr2.ap-south-1.rds.amazonaws.com
     DB_NAME: postgres
     DB_USER: postgres
     DB_PASS: Inventory123*
+
   vpc:
     securityGroupIds:
       - sg-04ebbbd2462cbae21
     subnetIds:
       - subnet-04b76deb4de2e3481
       - subnet-050a42b981b238cd4
+
   iam:
     role:
       statements:
@@ -26,25 +29,16 @@ provider:
             - ec2:CreateNetworkInterface
             - ec2:DescribeNetworkInterfaces
             - ec2:DeleteNetworkInterface
-            - ec2:DescribeInstances
-            - ec2:AttachNetworkInterface
-          Resource: '*'
+            - ec2:DescribeNetworkInterfaces
+          Resource: "*"
 
 plugins:
   - serverless-python-requirements
 
 custom:
   pythonRequirements:
-    dockerizePip: false
-    layer: false
+    dockerizePip: true   # REQUIRED on Windows
     slim: true
-    slimPatterns:
-      - "**/*.py[c|o]"
-      - "**/__pycache__*"
-      - "**/.git/**"
-    zip: true
-    useDownloadCache: false
-    useStaticCache: false
     noDeploy:
       - boto3
       - botocore
@@ -56,5 +50,6 @@ functions:
       - httpApi:
           path: /{proxy+}
           method: ANY
+
 
 

@@ -1,3 +1,9 @@
+import os
+import sys
+
+# Add app/vendor to sys.path so vendored/site-packages are importable in Lambda
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "vendor"))
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -13,7 +19,7 @@ app = FastAPI()
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://ele-inventory-app.s3-website.ap-south-1.amazonaws.com"],  # or ["*"] for quick testing
+    allow_origins=["d11ll76vikdfdn.cloudfront.net"],  # or ["*"] for quick testing
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

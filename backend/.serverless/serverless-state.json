@@ -6,7 +6,7 @@
     },
     "provider": {
       "name": "aws",
-      "runtime": "python3.11",
+      "runtime": "python3.10",
       "region": "ap-south-1",
       "memorySize": 512,
       "timeout": 30,
@@ -34,8 +34,7 @@
                 "ec2:CreateNetworkInterface",
                 "ec2:DescribeNetworkInterfaces",
                 "ec2:DeleteNetworkInterface",
-                "ec2:DescribeInstances",
-                "ec2:AttachNetworkInterface"
+                "ec2:DescribeNetworkInterfaces"
               ],
               "Resource": "*"
             }
@@ -225,10 +224,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/fastapi-products-api/dev/1765375990526-2025-12-10T14:13:10.526Z/fastapi-products-api.zip"
+                "S3Key": "serverless/fastapi-products-api/dev/1767447852538-2026-01-03T13:44:12.538Z/fastapi-products-api.zip"
               },
               "Handler": "app.main.handler",
-              "Runtime": "python3.11",
+              "Runtime": "python3.10",
               "FunctionName": "fastapi-products-api-dev-api",
               "MemorySize": 512,
               "Timeout": 30,
@@ -259,14 +258,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionFzinS2CbN3m3F3LRlE9cz2nRrMNg3dITuqI0vIMPg": {
+          "ApiLambdaVersionco6GtmbJIodGnM7W1uQp2wsh5ffFVvyVqtKfHhbmdU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "FePu1ElDFWmOK4gnr0dxoHTMI7eOgdyWHdzrLNJ7Ebk="
+              "CodeSha256": "79ZlQDWoMj095WjRoJC9fWzMZUNKioYKI32npQP4M+E="
             }
           },
           "HttpApi": {
@@ -374,7 +373,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionFzinS2CbN3m3F3LRlE9cz2nRrMNg3dITuqI0vIMPg"
+              "Ref": "ApiLambdaVersionco6GtmbJIodGnM7W1uQp2wsh5ffFVvyVqtKfHhbmdU"
             },
             "Export": {
               "Name": "sls-fastapi-products-api-dev-ApiLambdaFunctionQualifiedArn"
@@ -502,16 +501,7 @@
     "custom": {
       "pythonRequirements": {
         "dockerizePip": true,
-        "layer": false,
         "slim": true,
-        "slimPatterns": [
-          "**/*.py[c|o]",
-          "**/__pycache__*",
-          "**/.git/**"
-        ],
-        "zip": false,
-        "useDownloadCache": false,
-        "useStaticCache": false,
         "noDeploy": [
           "boto3",
           "botocore"
@@ -539,9 +529,9 @@
         "package": {},
         "memory": 512,
         "timeout": 30,
-        "runtime": "python3.11",
+        "runtime": "python3.10",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionFzinS2CbN3m3F3LRlE9cz2nRrMNg3dITuqI0vIMPg"
+        "versionLogicalId": "ApiLambdaVersionco6GtmbJIodGnM7W1uQp2wsh5ffFVvyVqtKfHhbmdU"
       }
     },
     "configValidationMode": "warn",
@@ -567,7 +557,7 @@
     "artifact": "C:\\Users\\Sirisha\\SH-Inventory\\backend\\.serverless\\fastapi-products-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/fastapi-products-api/dev/1765375990526-2025-12-10T14:13:10.526Z",
+    "artifactDirectoryName": "serverless/fastapi-products-api/dev/1767447852538-2026-01-03T13:44:12.538Z",
     "artifact": "fastapi-products-api.zip"
   }
 }
