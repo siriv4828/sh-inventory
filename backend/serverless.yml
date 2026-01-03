@@ -54,6 +54,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: true   # REQUIRED on Windows
+    pythonBin: python3.10   
     slim: true
     noDeploy:
       - boto3
