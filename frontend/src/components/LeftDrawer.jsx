@@ -9,7 +9,9 @@ import { Link } from "react-router-dom";
 const drawerWidth = 220;
 
 export function LeftDrawer() {
+
   return (
+    // left drawer
     <Drawer
       variant="permanent"
       sx={{
