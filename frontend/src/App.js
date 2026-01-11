@@ -16,13 +16,13 @@ export default function App() {
         <CssBaseline />
 
         {/* Top AppBar */}
-        <AppBar position="fixed" sx={{ zIndex: 1201,backgroundColor:"#003135" }}>
+        {/* <AppBar position="fixed" sx={{ zIndex: 1201,backgroundColor:"#003135" }}>
           <Toolbar>
             <Typography variant="h6" noWrap component="div">
               Inventory Management
             </Typography>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
 
         {/* Left Drawer */}
         <LeftDrawer />
@@ -30,7 +30,9 @@ export default function App() {
         {/* Main Content */}
         <Box
           component="main"
-          sx={{ flexGrow: 1, bgcolor: "background.default", p: 3, ml: `${drawerWidth}px` }}
+          sx={{ flexGrow: 1, bgcolor: "background.default", p: 3,
+          marginLeft: { sm: `${drawerWidth}px` }
+           }}
         >
           <Toolbar />
           <Routes>
