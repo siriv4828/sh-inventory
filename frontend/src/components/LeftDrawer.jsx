@@ -7,14 +7,14 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// import { UserContext, SnackContext } from "../Context/UserContext.jsx";
+import { UserContext, SnackContext } from "../context/UserContext";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 220;
 
 export function LeftDrawer() {
-  //  const { userProfile, setUserProfile } = useContext(UserContext);
-  // const { snack, setSnack } = useContext(SnackContext);
+   const { userProfile, setUserProfile } = useContext(UserContext);
+  const { snack, setSnack } = useContext(SnackContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
@@ -31,14 +31,14 @@ export function LeftDrawer() {
   const logOutAPI = async () => {
     setShowLogoutDailog(false);
 
-    // setUserProfile(null);
-    // setSnack({
-    //   message: t("logout_successfully"),
-    //   color: "green",
-    //   type: "success",
-    //   open: true,
-    // });
-    // console.log("Logging out user:", userProfile);
+    setUserProfile(null);
+    setSnack({
+      message: "Logout Successfully",
+      color: "green",
+      type: "success",
+      open: true,
+    });
+    console.log("Logging out user:", userProfile);
     navigate("/", { replace: true });
   };
 
