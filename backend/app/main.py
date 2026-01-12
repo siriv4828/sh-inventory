@@ -1,7 +1,7 @@
 import os
 import sys
 
-from backend.app.s3 import upload_image
+from .s3 import upload_image
 
 # Add app/vendor to sys.path so vendored/site-packages are importable in Lambda
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "vendor"))
