@@ -1,17 +1,19 @@
 import os
 import sys
 
+from backend.app.s3 import upload_image
+
 # Add app/vendor to sys.path so vendored/site-packages are importable in Lambda
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "vendor"))
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import  FastAPI, UploadFile, File, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from mangum import Mangum
 from sqlalchemy import func
 
 from .db import get_db
-from .models import Products
+from .models import EleProducts
 from .schemas import ProductCreate
 
 app = FastAPI()
@@ -25,59 +27,93 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🟩 Get All Products
-@app.get("/api/products")
-def get_products(db: Session = Depends(get_db)):
-    products = db.query(Products).all()
-    return products
+@app.post("/products")
+def create_product(
+    name: str = Form(...),
+    quantity: int = Form(...),
+    price: float = Form(...),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    image_url = upload_image(image)
 
-# 🟩 Create Product
-@app.post("/api/products")
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
-    new_product = Products(
-        name=product.name,
-        quantity=product.quantity,
-        price=product.price
+    product = EleProducts(
+        name=name,
+        quantity=quantity,
+        price=price,
+        image=image_url
     )
-    
-    db.add(new_product)
-    db.commit()
-    db.refresh(new_product)
-    return new_product
 
-# 🟩 Update Product
-@app.put("/api/products/{product_id}")
-def update_product(product_id: int, updated_product: ProductCreate, db: Session = Depends(get_db)):
-    product = db.query(Products).filter(Products.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
-
-    product.name = updated_product.name
-    product.quantity = updated_product.quantity
-    product.price = updated_product.price
-
+    db.add(product)
     db.commit()
     db.refresh(product)
+
     return product
 
-# 🟩 Delete Product
-@app.delete("/api/products/{product_id}")
-def delete_product(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Products).filter(Products.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
+@app.get("/products")
+def get_products(db: Session = Depends(get_db)):
+    return db.query(EleProducts).all()
 
-    db.delete(product)
+@app.delete("/products/{id}")
+def delete_product(id: int, db: Session = Depends(get_db)):
+    item = db.query(EleProducts).filter(EleProducts.id == id).first()
+    db.delete(item)
     db.commit()
-    return {"message": "Product deleted successfully"}
+    return {"message": "Deleted"}
 
-# 🟩 Product Summary
-@app.get("/api/products/summary")
-def products_summary(db: Session = Depends(get_db)):
-    total_count = db.query(func.sum(Products.quantity)).scalar() or 0
-    total_value = db.query(func.sum(Products.quantity * Products.price)).scalar() or 0.0
-    print(f"Total Count: {total_count}, Total Value: {total_value}")
-    return {"total_count": int(total_count), "total_value": float(total_value)}
+# 🟩 Get All Products
+# @app.get("/api/products")
+# def get_products(db: Session = Depends(get_db)):
+#     products = db.query(Products).all()
+#     return products
+
+# # 🟩 Create Product
+# @app.post("/api/products")
+# def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+#     new_product = Products(
+#         name=product.name,
+#         quantity=product.quantity,
+#         price=product.price
+#     )
+    
+#     db.add(new_product)
+#     db.commit()
+#     db.refresh(new_product)
+#     return new_product
+
+# # 🟩 Update Product
+# @app.put("/api/products/{product_id}")
+# def update_product(product_id: int, updated_product: ProductCreate, db: Session = Depends(get_db)):
+#     product = db.query(Products).filter(Products.id == product_id).first()
+#     if not product:
+#         raise HTTPException(status_code=404, detail="Product not found")
+
+#     product.name = updated_product.name
+#     product.quantity = updated_product.quantity
+#     product.price = updated_product.price
+
+#     db.commit()
+#     db.refresh(product)
+#     return product
+
+# # 🟩 Delete Product
+# @app.delete("/api/products/{product_id}")
+# def delete_product(product_id: int, db: Session = Depends(get_db)):
+#     product = db.query(Products).filter(Products.id == product_id).first()
+#     if not product:
+#         raise HTTPException(status_code=404, detail="Product not found")
+
+#     db.delete(product)
+#     db.commit()
+#     return {"message": "Product deleted successfully"}
+
+# # 🟩 Product Summary
+# @app.get("/api/products/summary")
+# def products_summary(db: Session = Depends(get_db)):
+#     total_count = db.query(func.sum(Products.quantity)).scalar() or 0
+#     total_value = db.query(func.sum(Products.quantity * Products.price)).scalar() or 0.0
+#     print(f"Total Count: {total_count}, Total Value: {total_value}")
+#     return {"total_count": int(total_count), "total_value": float(total_value)}
 
 # Lambda Handler
 handler = Mangum(app)
