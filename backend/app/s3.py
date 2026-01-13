@@ -11,7 +11,7 @@ def upload_image(file):
         file.file,
         BUCKET,
         filename,
-        ExtraArgs={"ACL": "public-read", "ContentType": file.content_type}
+        ExtraArgs={"ContentType": file.content_type}
     )
 
     return f"https://{BUCKET}.s3.amazonaws.com/{filename}"
