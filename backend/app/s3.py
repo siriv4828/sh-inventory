@@ -2,7 +2,7 @@ import boto3
 import uuid
 
 s3 = boto3.client("s3")
-BUCKET = "ele-products-images"
+BUCKET = "ele-products-images-123"
 
 def upload_image(file):
     filename = str(uuid.uuid4()) + "_" + file.filename
