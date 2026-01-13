@@ -61,6 +61,47 @@ def delete_product(id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Deleted"}
 
+@app.put("/products/{id}")
+def update_product(
+    id: int,
+    name: str = Form(None),
+    quantity: int = Form(None),
+    price: float = Form(None),
+    image: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+    item = db.query(EleProducts).filter(EleProducts.id == id).first()
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    if name is not None:
+        item.name = name
+
+    if quantity is not None:
+        item.quantity = quantity
+
+    if price is not None:
+        item.price = price
+
+    if image:
+        image_url = upload_image(image)
+        item.image = image_url
+
+    db.commit()
+    db.refresh(item)
+
+    return {
+        "message": "Updated successfully",
+        "product": {
+            "id": item.id,
+            "name": item.name,
+            "image": item.image,
+            "quantity": item.quantity,
+            "price": item.price
+        }
+    }
+
 # 🟩 Get All Products
 # @app.get("/api/products")
 # def get_products(db: Session = Depends(get_db)):
