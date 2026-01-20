@@ -1,56 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { Box, Grid, Paper, Typography, CircularProgress, Button } from "@mui/material";
-import { getProducts } from "../api";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Chip,
+  Grid, Box
+} from "@mui/material";
+import { API_URL } from "../api";
 
-export default function Inventory() {
+const getStock = (qty) => {
+  if (qty === 0) return { label: "LOW", color: "error" };
+  if (qty <= 10) return { label: "MEDIUM", color: "warning" };
+  return { label: "HIGH", color: "success" };
+};
+
+export default function ProductCards() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const data = await getProducts();
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-      setProducts([]);
-    }
-    setLoading(false);
-  };
 
   useEffect(() => {
-    fetchProducts();
+    axios.get(`${API_URL}/products`).then((res) => setProducts(res.data));
+    console.log(products);
   }, []);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        <Typography variant="h5">Products & Quantities</Typography>
-<Button variant="outlined"sx={{ mt: 2,backgroundColor:"#003135",color:"ButtonShadow"}} onClick={fetchProducts} disabled={loading}>
-          Refresh
-        </Button>
-      </Box>
+    <Grid container spacing={3} padding={3}>
+      {console.log(products)}
+      {products.map((p) => {
+        const stock = getStock(p.quantity);
 
-      {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-          <CircularProgress />
-        </Box>
-      ) : products.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: "center" }}>
-          <Typography>No products found.</Typography>
-        </Paper>
-      ) : (
-        <Grid container spacing={2}>
-          {products.map((p) => (
-            <Grid item xs={12} sm={6} md={4} key={p.id}>
-              <Paper sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "space-between" }}>
-                <Typography >{p.name}</Typography>
-                <Typography sx={{ fontWeight: 600 }}>{Number(p.quantity || 0)}</Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </Box>
+        return (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={p.id}>
+            <Card
+              sx={{
+                height: "100%",
+                borderRadius: 3,
+                boxShadow: 3,
+                position: "relative",
+                transition: "0.3s",
+                "&:hover": { transform: "scale(1.03)" }
+              }}
+            >
+              {/* <CardMedia
+                component="img"
+                image={p.image}
+                alt={p.name}
+                sx={{
+                  height: 180,
+                  width: "100%",
+                  objectFit: "cover",
+                  backgroundColor: "#f5f5f5"
+                }}
+              /> */}
+              <Box
+                sx={{
+                  height: 180,
+                  width: "100%",
+                  overflow: "hidden",
+                  backgroundColor: "#f5f5f5"
+                }}
+              >
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover"
+                  }}
+                />
+              </Box>
+
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: 1,
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: "#fff",
+                  backgroundColor:
+                    stock.color === "error"
+                      ? "#d32f2f"
+                      : stock.color === "warning"
+                        ? "#ed6c02"
+                        : "#2e7d32",
+                  boxShadow: 2,
+                }}
+              >
+                {stock.label}
+              </Box>
+
+              <CardContent>
+                <Typography variant="h6">{p.name}</Typography>
+                <Typography color="text.secondary">
+                  ₹ {p.price}
+                </Typography>
+
+                <Typography sx={{ mt: 1 }}>
+                  Quantity: <b>{p.quantity}</b>
+                </Typography>
+
+                {/* <Chip
+                  label={stock.label}
+                  color={stock.color}
+                  sx={{ mt: 1 }}
+                /> */}
+              </CardContent>
+            </Card>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 }

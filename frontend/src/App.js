@@ -6,9 +6,12 @@ import { LeftDrawer } from "./components/LeftDrawer";
 import { Box, CssBaseline, Toolbar, AppBar, Typography ,Snackbar,Slide,Alert} from "@mui/material";
 import ProductList from "./components/ProductList";
 import Inventory from "./Pages/Inventory";
+import Suppliers from "./Pages/Suppliers";
+import PurchaseOrders from "./Pages/PurchaseOrders";
 import { Login } from "./Pages/Login";
 import { Home } from "./Pages/Home";
 import { UserContext, SnackContext } from "./context/UserContext";
+import Products from "./Pages/Products";
 
 const drawerWidth = 220;
 
@@ -77,8 +80,10 @@ export default function App() {
                 <Route index element={<Navigate to="home" replace />} />
                 <Route path="home" element={<Home />} />
                 <Route path="add" element={<AddProductForm />} />
-                <Route path="products" element={<ProductList />} />
+                <Route path="products" element={<Products />} />
                 <Route path="inventory" element={<Inventory />} />
+                <Route path="suppliers" element={<Suppliers />} />
+                <Route path="purchase-orders" element={<PurchaseOrders />} />
                 <Route path="*" element={<Navigate to="home" replace />} />
 
               </Route>

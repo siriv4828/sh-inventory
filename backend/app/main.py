@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List
 
 from .s3 import upload_image
 
@@ -13,8 +14,8 @@ from mangum import Mangum
 from sqlalchemy import func
 
 from .db import get_db
-from .models import EleProducts
-from .schemas import ProductCreate
+from .models import EleProducts, PurchaseOrder
+from .schemas import ProductCreate, PurchaseOrderResponse
 
 app = FastAPI()
 
@@ -102,59 +103,80 @@ def update_product(
         }
     }
 
-# 🟩 Get All Products
-# @app.get("/api/products")
-# def get_products(db: Session = Depends(get_db)):
-#     products = db.query(Products).all()
-#     return products
+@app.post("/purchase-orders", response_model=PurchaseOrderResponse)
+def create_purchase_order(
+    supplier_name: str = Form(...),
+    product_id: int = Form(...),
+    quantity: int = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    product = db.query(EleProducts).filter(EleProducts.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
 
-# # 🟩 Create Product
-# @app.post("/api/products")
-# def create_product(product: ProductCreate, db: Session = Depends(get_db)):
-#     new_product = Products(
-#         name=product.name,
-#         quantity=product.quantity,
-#         price=product.price
-#     )
-    
-#     db.add(new_product)
-#     db.commit()
-#     db.refresh(new_product)
-#     return new_product
+    order = PurchaseOrder(
+        supplier_name=supplier_name,
+        product_id=product.id,
+        product_name=product.name,
+        quantity=quantity,
+        status=status
+    )
 
-# # 🟩 Update Product
-# @app.put("/api/products/{product_id}")
-# def update_product(product_id: int, updated_product: ProductCreate, db: Session = Depends(get_db)):
-#     product = db.query(Products).filter(Products.id == product_id).first()
-#     if not product:
-#         raise HTTPException(status_code=404, detail="Product not found")
+    db.add(order)
 
-#     product.name = updated_product.name
-#     product.quantity = updated_product.quantity
-#     product.price = updated_product.price
+    # ✅ Auto-update product stock if delivered
+    if status.lower() == "delivered":
+        product.quantity += quantity
 
-#     db.commit()
-#     db.refresh(product)
-#     return product
+    db.commit()
+    db.refresh(order)
 
-# # 🟩 Delete Product
-# @app.delete("/api/products/{product_id}")
-# def delete_product(product_id: int, db: Session = Depends(get_db)):
-#     product = db.query(Products).filter(Products.id == product_id).first()
-#     if not product:
-#         raise HTTPException(status_code=404, detail="Product not found")
+    return order
 
-#     db.delete(product)
-#     db.commit()
-#     return {"message": "Product deleted successfully"}
+@app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
+def get_purchase_orders(db: Session = Depends(get_db)):
+    return db.query(PurchaseOrder).order_by(PurchaseOrder.date.desc()).all()
 
-# # 🟩 Product Summary
-# @app.get("/api/products/summary")
-# def products_summary(db: Session = Depends(get_db)):
-#     total_count = db.query(func.sum(Products.quantity)).scalar() or 0
-#     total_value = db.query(func.sum(Products.quantity * Products.price)).scalar() or 0.0
-#     print(f"Total Count: {total_count}, Total Value: {total_value}")
-#     return {"total_count": int(total_count), "total_value": float(total_value)}
+@app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
+def get_purchase_order(id: int, db: Session = Depends(get_db)):
+    order = db.query(PurchaseOrder).filter(PurchaseOrder.id == id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
 
-# Lambda Handler
+@app.put("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
+def update_purchase_order(
+    id: int,
+    supplier_name: str = Form(...),
+    product_id: int = Form(...),
+    quantity: int = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    order = db.query(PurchaseOrder).filter(PurchaseOrder.id == id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    product = db.query(EleProducts).filter(EleProducts.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # Check previous status
+    was_delivered = order.status.lower() == "delivered"
+
+    order.supplier_name = supplier_name
+    order.product_id = product.id
+    order.product_name = product.name
+    order.quantity = quantity
+    order.status = status
+
+    # If status changed to delivered → update stock
+    if not was_delivered and status.lower() == "delivered":
+        product.quantity += quantity
+
+    db.commit()
+    db.refresh(order)
+    return order
+
 handler = Mangum(app)

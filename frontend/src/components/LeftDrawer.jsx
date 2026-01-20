@@ -50,8 +50,10 @@ export function LeftDrawer() {
       <List>
         {[
           { text: "Dashboard", link: "/", icon: <DashboardIcon sx={{ color: "white" }} /> },
-          { text: "Products", link: "/products", icon: <DevicesIcon sx={{ color: "white" }} /> },
-          { text: "Inventory", link: "/inventory", icon: <InventoryIcon sx={{ color: "white" }} /> },
+          { text: "Products", link: "/dashboard/products", icon: <DevicesIcon sx={{ color: "white" }} /> },
+          { text: "Inventory", link: "/dashboard/inventory", icon: <InventoryIcon sx={{ color: "white" }} /> },
+          { text: "Purchase Orders", link: "/dashboard/purchase-orders", icon: <InventoryIcon sx={{ color: "white" }} /> },
+          { text: "Suppliers", link: "/dashboard/suppliers", icon: <InventoryIcon sx={{ color: "white" }} /> },
           { text: "AddProducts", link: "/add", icon: <AddBoxIcon sx={{ color: "white" }} /> },
         ].map((item) => (
           <ListItem button key={item.text} onClick={() => setMobileOpen(false)}>
