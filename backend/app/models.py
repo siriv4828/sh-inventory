@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Date, ForeignKey, Integer, String, Float, func
+from datetime import datetime
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, String, Float, func
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -22,7 +23,9 @@ class PurchaseOrder(Base):
     product_id = Column(Integer, ForeignKey("ele_products.id"), nullable=False)
     product_name = Column(String, nullable=False)
 
-    order_date = Column(Date, server_default=func.current_date())
+    # order_date = Column(Date, server_default=func.current_date())
+    order_date = Column(DateTime, default=datetime.utcnow)
+
 
     quantity = Column(Integer, nullable=False)
 

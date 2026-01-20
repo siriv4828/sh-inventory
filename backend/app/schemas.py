@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 class ProductCreate(BaseModel):
@@ -13,7 +14,8 @@ class PurchaseOrderResponse(BaseModel):
     product_name: str
     quantity: int
     status: str
-    date: datetime
+    # date: datetime
+    date: Optional[datetime] = None
 
     class Config:
         orm_mode = True 
