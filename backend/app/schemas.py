@@ -16,4 +16,4 @@ class PurchaseOrderResponse(BaseModel):
     date: datetime
 
     class Config:
-        from_attributes = True
+        orm_mode = True 
