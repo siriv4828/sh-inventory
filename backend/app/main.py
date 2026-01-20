@@ -136,7 +136,7 @@ def create_purchase_order(
 
 @app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
 def get_purchase_orders(db: Session = Depends(get_db)):
-    return db.query(PurchaseOrder).order_by(PurchaseOrder.date.desc()).all()
+    return db.query(PurchaseOrder).order_by(PurchaseOrder.order_date.desc()).all()
 
 @app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
 def get_purchase_order(id: int, db: Session = Depends(get_db)):
