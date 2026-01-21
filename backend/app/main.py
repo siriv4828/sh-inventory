@@ -133,7 +133,16 @@ def create_purchase_order(
     db.refresh(order)
 
     # return order
-    return PurchaseOrderResponse.from_orm(order)
+    return {
+        "id": order.id,
+        "supplier_name": order.supplier_name,
+        "product_id": order.product_id,
+        "product_name": order.product_name,
+        "quantity": order.quantity,
+        "status": order.status,
+        "order_date": order.order_date.isoformat()
+    }
+    
 
 # @app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
 # def get_purchase_orders(db: Session = Depends(get_db)):
@@ -143,7 +152,19 @@ def create_purchase_order(
 def get_orders(db: Session = Depends(get_db)):
     orders = db.query(PurchaseOrder).order_by(PurchaseOrder.id.desc()).all()
 
-    return [PurchaseOrderResponse.from_orm(o) for o in orders]
+    result = []
+    for o in orders:
+        result.append({
+            "id": o.id,
+            "supplier_name": o.supplier_name,
+            "product_id": o.product_id,
+            "product_name": o.product_name,
+            "quantity": o.quantity,
+            "status": o.status,
+            "order_date": o.order_date.isoformat() if o.order_date else None
+        })
+
+    return result
 
 
 @app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
