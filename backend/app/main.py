@@ -179,4 +179,15 @@ def update_purchase_order(
     db.refresh(order)
     return order
 
+@app.delete("/purchase-orders/{order_id}")
+def delete_purchase_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(PurchaseOrder).filter(PurchaseOrder.id == order_id).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Purchase order not found")
+    db.delete(order)
+    db.commit()
+
+    return {"message": "Purchase order deleted successfully"}
+
 handler = Mangum(app)
