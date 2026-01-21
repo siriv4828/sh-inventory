@@ -100,6 +100,16 @@ const suppliers = [
     loadOrders();
   };
 
+  const handleDelete = async (order) => {
+    await axios.delete(`${API}/purchase-orders/${order.id}`);
+    setSnack({
+      message: "Order Deleted Successfully",
+      color: "green",
+      type: "success",
+      open: true,
+    });
+    loadOrders();
+  };
   // ---------------- EDIT ----------------
   const handleEdit = (row) => {
     setId(row.id);
@@ -177,6 +187,9 @@ const suppliers = [
                 <TableCell>
                   <Button size="small" onClick={() => handleEdit(o)}>
                     Edit
+                  </Button>
+                   <Button size="small" onClick={() => handleDelete(o)}>
+                    Delete
                   </Button>
                 </TableCell>
               </TableRow>
