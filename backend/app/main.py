@@ -132,11 +132,19 @@ def create_purchase_order(
     db.commit()
     db.refresh(order)
 
-    return order
+    # return order
+    return PurchaseOrderResponse.from_orm(order)
 
-@app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
-def get_purchase_orders(db: Session = Depends(get_db)):
-    return db.query(PurchaseOrder).order_by(PurchaseOrder.order_date.desc()).all()
+# @app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
+# def get_purchase_orders(db: Session = Depends(get_db)):
+#     return db.query(PurchaseOrder).order_by(PurchaseOrder.order_date.desc()).all()
+
+@app.get("/purchase-orders", response_model=list[PurchaseOrderResponse])
+def get_orders(db: Session = Depends(get_db)):
+    orders = db.query(PurchaseOrder).order_by(PurchaseOrder.id.desc()).all()
+
+    return [PurchaseOrderResponse.from_orm(o) for o in orders]
+
 
 @app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
 def get_purchase_order(id: int, db: Session = Depends(get_db)):
