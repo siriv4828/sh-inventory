@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, String, Float, func
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,8 +24,11 @@ class PurchaseOrder(Base):
     product_name = Column(String, nullable=False)
 
     # order_date = Column(Date, server_default=func.current_date())
-    order_date = Column(DateTime, default=datetime.utcnow)
-
+    # order_date = Column(DateTime, default=datetime.utcnow)
+    order_date = Column(
+    DateTime(timezone=True),
+    default=lambda: datetime.now(timezone.utc)
+    )
 
     quantity = Column(Integer, nullable=False)
 

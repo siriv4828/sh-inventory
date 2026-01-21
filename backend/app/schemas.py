@@ -15,7 +15,7 @@ class PurchaseOrderResponse(BaseModel):
     quantity: int
     status: str
     # date: datetime
-    date: Optional[datetime] = None
+    order_date: Optional[datetime] = None
 
     class Config:
         orm_mode = True 

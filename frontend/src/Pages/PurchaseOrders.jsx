@@ -1,161 +1,341 @@
-import { useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import {
-  Table, TableBody, TableCell, TableHead, TableRow,
-  Button, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, MenuItem, Select, Box, IconButton
+  Box, Button, Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, MenuItem,
+  Typography
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import { API_URL } from "../api";
+import { SnackContext } from "../context/UserContext";
+import axios from "axios";
 
-/* Dummy data */
+const API = API_URL;
+
+export default function PurchaseOrdersPage() {
+   const {setSnack}=useContext(SnackContext);
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [add_open, setAdd_Open] = useState(false);
+  const [edit_open, setEdit_Open] = useState(false);
+  const [id, setId] = useState(null);
+  // const isEdit = Boolean(editing);
+
 const suppliers = [
   { id: 1, name: "ABC Electronics" },
   { id: 2, name: "Bright Supplies" },
   { id: 3, name: "Smart Traders" },
+  { id: 4, name: "Global Tech" },
+  { id: 5, name: "NextGen Distributors" },
 ];
-
-const products = [
-  { id: 101, name: "LED TV" },
-  { id: 102, name: "Washing Machine" },
-  { id: 103, name: "Refrigerator" },
-];
-
-export default function PurchaseOrders() {
-  const [orders, setOrders] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
 
   const [form, setForm] = useState({
-    supplier: "",
-    product: "",
+    supplier_name: "",
+    product_id: "",
     quantity: "",
     status: "ordered",
   });
 
-  const openAdd = () => {
-    setEditIndex(null);
-    setForm({ supplier: "", product: "", quantity: "", status: "ordered" });
-    setOpen(true);
+  // ---------------- FETCH DATA ----------------
+  const loadOrders = async () => {
+    const res = await fetch(`${API}/purchase-orders`);
+    setOrders(await res.json());
   };
 
-  const openEdit = (i) => {
-    setEditIndex(i);
-    setForm(orders[i]);
-    setOpen(true);
+  const loadProducts = async () => {
+    const res = await fetch(`${API}/products`);
+    setProducts(await res.json());
   };
 
-  const saveOrder = () => {
-    if (editIndex !== null) {
-      const copy = [...orders];
-      copy[editIndex] = form;
-      setOrders(copy);
-    } else {
-      setOrders([...orders, form]);
+  useEffect(() => {
+    loadOrders();
+    loadProducts();
+  }, []);
+
+  // ---------------- SUBMIT ----------------
+  const handleSubmit = async () => {
+    if (!form.supplier_name || !form.product_id || !form.quantity) {
+      setSnack({
+        message: "Please fill all fields",
+        color: "red",
+        type: "error",
+        open: true,
+      });
+      return;
     }
-    setOpen(false);
+
+    const data = new FormData();
+    data.append("supplier_name", form.supplier_name);
+    data.append("product_id", form.product_id);
+    data.append("quantity", form.quantity);
+    data.append("status", form.status);
+
+    axios.post(`${API}/purchase-orders`, data)
+    setAdd_Open(false);
+    setSnack({
+      message: "Order Placed Successfully",
+      color: "green",
+      type: "success",
+      open: true,
+    });
+
+
+    // const url = editing
+    //   ? `${API}/purchase-orders/${editing.id}`
+    //   : `${API}/purchase-orders`;
+
+    // const method = editing ? "PUT" : "POST";
+
+    // await fetch(url, { method, body: fd });
+
+    // setOpen(false);
+    // setEditing(null);
+    setForm({
+      supplier_name: "",
+      product_id: "",
+      quantity: "",
+      status: "ordered",
+    });
+
+    loadOrders();
   };
 
+  // ---------------- EDIT ----------------
+  const handleEdit = (row) => {
+    setId(row.id);
+    console.log("Editing row:", row,);
+    setForm({
+      supplier_name: row.supplier_name,
+      product_id: row.product_id,
+      quantity: row.quantity,
+      status: row.status,
+    });
+    console.log("Form set to:", form);
+    setEdit_Open(true);
+  };
+ const handleEditSubmit = async () => {
+  const data = new FormData();
+    data.append("supplier_name", form.supplier_name);
+    data.append("product_id", form.product_id);
+    data.append("quantity", form.quantity);
+    data.append("status", form.status);
+
+    axios.put(`${API}/purchase-orders/${id}`, data)
+    setSnack({
+      message: "Status Updated Successfully",
+      color: "green",
+      type: "success",
+      open: true,
+    });
+    setEdit_Open(false);
+ setForm({
+      supplier_name: "",
+      product_id: "",
+      quantity: "",
+      status: "ordered",
+    });
+    loadOrders();
+  };
   return (
     <Box p={3}>
-      <Button
-        variant="contained"
-        sx={{ float: "right", mb: 2 }}
-        onClick={openAdd}
-      >
-        + Place Order
-      </Button>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <h2>Purchase Orders</h2>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{ backgroundColor: "#003135", mt: 4 }}
+          onClick={() => setAdd_Open(true)}
+        >
+          Place Order
+        </Button>
+      </Box>
 
-      <h2>Purchase Orders</h2>
-
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Supplier</TableCell>
-            <TableCell>Product</TableCell>
-            <TableCell>Quantity</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Edit</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {orders.map((o, i) => (
-            <TableRow key={i}>
-              <TableCell>{o.supplier}</TableCell>
-              <TableCell>{o.product}</TableCell>
-              <TableCell>{o.quantity}</TableCell>
-              <TableCell>{o.status}</TableCell>
-              <TableCell>
-                <IconButton onClick={() => openEdit(i)}>
-                  <EditIcon />
-                </IconButton>
-              </TableCell>
+      {/* TABLE */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Supplier</TableCell>
+              <TableCell>Product</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
 
-      {/* Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+          <TableBody>
+            {orders.map((o) => (
+              <TableRow key={o.id}>
+                <TableCell>{o.supplier_name}</TableCell>
+                <TableCell>
+                   {o.product_name}
+                </TableCell>
+                <TableCell>{o.quantity}</TableCell>
+                <TableCell>{o.status}</TableCell>
+                <TableCell>{new Date(o.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  <Button size="small" onClick={() => handleEdit(o)}>
+                    Edit
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* DIALOG */}
+      <Dialog open={add_open} onClose={() => setAdd_Open(false)} fullWidth>
         <DialogTitle>
-          {editIndex !== null ? "Edit Order" : "Place Order"}
+   Place Order
+          
         </DialogTitle>
 
-        <DialogContent>
-          <Select
+        <DialogContent sx={{ mt: 1 }}>
+          <TextField
             fullWidth
-            value={form.supplier}
-            displayEmpty
-            onChange={(e) => setForm({ ...form, supplier: e.target.value })}
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="" disabled>Select Supplier</MenuItem>
-            {suppliers.map((s) => (
-              <MenuItem key={s.id} value={s.name}>
-                {s.name}
+            select
+            label="Supplier Name"
+            value={form.supplier_name}
+            onChange={(e) =>
+              setForm({ ...form, supplier_name: e.target.value })
+            }
+            margin="dense"
+          > 
+          {suppliers.map((p) => (
+              <MenuItem key={p.id} value={p.name}>
+                 {p.name}
               </MenuItem>
             ))}
-          </Select>
-
-          <Select
-            fullWidth
-            value={form.product}
-            displayEmpty
-            onChange={(e) => setForm({ ...form, product: e.target.value })}
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="" disabled>Select Product</MenuItem>
-            {products.map((p) => (
-              <MenuItem key={p.id} value={`${p.id} - ${p.name}`}>
-                {p.id} - {p.name}
-              </MenuItem>
-            ))}
-          </Select>
+            </TextField>
 
           <TextField
-            label="Quantity"
-            type="number"
             fullWidth
-            sx={{ mt: 2 }}
+            select
+            label="Product"
+            value={form.product_id}
+            onChange={(e) =>
+              setForm({ ...form, product_id: e.target.value })
+            }
+            margin="dense"
+          >
+            {products.map((p) => (
+              <MenuItem key={p.id} value={p.id}>
+                 {p.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Quantity"
             value={form.quantity}
-            onChange={(e) => setForm({ ...form, quantity: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, quantity: e.target.value })
+            }
+            margin="dense"
           />
 
-          <Select
+          <TextField
             fullWidth
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-            sx={{ mt: 2 }}
+            select
+            label="Status"
+value={form.status}
+            onChange={(e) =>
+              setForm({ ...form, status: e.target.value })
+            }
+            margin="dense"
           >
             <MenuItem value="ordered">Ordered</MenuItem>
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="delivered">Delivered</MenuItem>
-          </Select>
+          </TextField>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={saveOrder}>
-            Save
+          <Button onClick={() => setAdd_Open(false)}><Typography color="#003135">Cancel</Typography></Button>
+          <Button variant="contained" sx={{ backgroundColor: "#003135" }} onClick={handleSubmit}>
+            Place Order
+          </Button>
+        </DialogActions>
+      </Dialog>
+        <Dialog open={edit_open} onClose={() => setEdit_Open(false)} fullWidth>
+        <DialogTitle>
+   Edit Order
+        </DialogTitle>
+
+        <DialogContent sx={{ mt: 1 }}>
+          <TextField
+            fullWidth
+            select
+            label="Supplier Name"
+            // disabled={isEdit}
+            value={form.supplier_name}
+            onChange={(e) =>
+              setForm({ ...form, supplier_name: e.target.value })
+            }
+            margin="dense"
+          > 
+          {suppliers.map((p) => (
+              <MenuItem key={p.id} value={p.name}>
+                 {p.name}
+              </MenuItem>
+            ))}
+            </TextField>
+
+          <TextField
+            fullWidth
+            select
+            label="Product"
+            disabled
+            value={form.product_id}
+            onChange={(e) =>
+              setForm({ ...form, product_id: e.target.value })
+            }
+            margin="dense"
+          >
+            {products.map((p) => (
+              <MenuItem key={p.id} value={p.id}>
+                 {p.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Quantity"
+            disabled
+            value={form.quantity}
+            onChange={(e) =>
+              setForm({ ...form, quantity: e.target.value })
+            }
+            margin="dense"
+          />
+
+          <TextField
+            fullWidth
+            select
+            label="Status"
+            disabled={form.status === "delivered"}
+            value={form.status}
+            onChange={(e) =>
+              setForm({ ...form, status: e.target.value })
+            }
+            margin="dense"
+          >
+            <MenuItem value="ordered">Ordered</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="delivered">Delivered</MenuItem>
+          </TextField>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setEdit_Open(false)}><Typography color="#003135">Cancel</Typography></Button>
+          <Button variant="contained"  sx={{ backgroundColor: "#003135" }} onClick={handleEditSubmit}>
+            Edit The Order
           </Button>
         </DialogActions>
       </Dialog>
