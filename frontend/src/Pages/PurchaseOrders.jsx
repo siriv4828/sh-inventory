@@ -50,7 +50,7 @@ const suppliers = [
   useEffect(() => {
     loadOrders();
     loadProducts();
-  }, []);
+  }, [orders]);
 
   // ---------------- SUBMIT ----------------
   const handleSubmit = async () => {
@@ -172,12 +172,11 @@ const suppliers = [
                 </TableCell>
                 <TableCell>{o.quantity}</TableCell>
                 <TableCell>{o.status}</TableCell>
-                {/* <TableCell>{new Date(o.order_date).toLocaleDateString()}</TableCell> */}
                 <TableCell>{o.order_date}</TableCell>
                                <TableCell>
                   <Button size="small" onClick={() => handleEdit(o)}>
                     Edit
-                  </Button>
+                  </Button></TableCell><TableCell>
                    <Button size="small" onClick={() => handleDelete(o)}>
                     Delete
                   </Button>
@@ -274,7 +273,7 @@ value={form.status}
             fullWidth
             select
             label="Supplier Name"
-            // disabled={isEdit}
+            disabled
             value={form.supplier_name}
             onChange={(e) =>
               setForm({ ...form, supplier_name: e.target.value })
