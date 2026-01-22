@@ -28,6 +28,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def serialize_order(o):
+    return {
+        "id": o.id,
+        "supplier_name": o.supplier_name,
+        "product_id": o.product_id,
+        "product_name": o.product_name,
+        "quantity": o.quantity,
+        "status": o.status,
+        "order_date": o.order_date.isoformat() if o.order_date else None
+    }
+
 @app.post("/products")
 def create_product(
     name: str = Form(...),
@@ -133,16 +144,8 @@ def create_purchase_order(
     db.refresh(order)
 
     # return order
-    return {
-        "id": order.id,
-        "supplier_name": order.supplier_name,
-        "product_id": order.product_id,
-        "product_name": order.product_name,
-        "quantity": order.quantity,
-        "status": order.status,
-        "order_date": order.order_date.isoformat()
-    }
-    
+   
+    return serialize_order(order)
 
 # @app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
 # def get_purchase_orders(db: Session = Depends(get_db)):
@@ -153,18 +156,19 @@ def get_orders(db: Session = Depends(get_db)):
     orders = db.query(PurchaseOrder).order_by(PurchaseOrder.id.desc()).all()
 
     result = []
-    for o in orders:
-        result.append({
-            "id": o.id,
-            "supplier_name": o.supplier_name,
-            "product_id": o.product_id,
-            "product_name": o.product_name,
-            "quantity": o.quantity,
-            "status": o.status,
-            "order_date": o.order_date.isoformat() if o.order_date else None
-        })
+    return [serialize_order(o) for o in orders]
+    # for o in orders:
+    #     result.append({
+    #         "id": o.id,
+    #         "supplier_name": o.supplier_name,
+    #         "product_id": o.product_id,
+    #         "product_name": o.product_name,
+    #         "quantity": o.quantity,
+    #         "status": o.status,
+    #         "order_date": o.order_date.isoformat() if o.order_date else None
+    #     })
 
-    return result
+    # return result
 
 
 @app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
@@ -172,7 +176,7 @@ def get_purchase_order(id: int, db: Session = Depends(get_db)):
     order = db.query(PurchaseOrder).filter(PurchaseOrder.id == id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    return order
+    return serialize_order(order)
 
 @app.put("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
 def update_purchase_order(
@@ -206,7 +210,7 @@ def update_purchase_order(
 
     db.commit()
     db.refresh(order)
-    return order
+    return serialize_order(order)
 
 @app.delete("/purchase-orders/{order_id}")
 def delete_purchase_order(order_id: int, db: Session = Depends(get_db)):

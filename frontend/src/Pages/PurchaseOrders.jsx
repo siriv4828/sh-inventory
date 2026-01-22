@@ -78,18 +78,6 @@ const suppliers = [
       type: "success",
       open: true,
     });
-
-
-    // const url = editing
-    //   ? `${API}/purchase-orders/${editing.id}`
-    //   : `${API}/purchase-orders`;
-
-    // const method = editing ? "PUT" : "POST";
-
-    // await fetch(url, { method, body: fd });
-
-    // setOpen(false);
-    // setEditing(null);
     setForm({
       supplier_name: "",
       product_id: "",
@@ -171,6 +159,7 @@ const suppliers = [
               <TableCell>Status</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
 
@@ -183,8 +172,9 @@ const suppliers = [
                 </TableCell>
                 <TableCell>{o.quantity}</TableCell>
                 <TableCell>{o.status}</TableCell>
-                <TableCell>{new Date(o.date).toLocaleDateString()}</TableCell>
-                <TableCell>
+                {/* <TableCell>{new Date(o.order_date).toLocaleDateString()}</TableCell> */}
+                <TableCell>{o.order_date}</TableCell>
+                               <TableCell>
                   <Button size="small" onClick={() => handleEdit(o)}>
                     Edit
                   </Button>
