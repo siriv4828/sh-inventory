@@ -127,7 +127,7 @@ def update_product(
         }
     }
 
-@app.get("/summary",InventorySummary)
+@app.get("/summary", response_model=InventorySummary)
 def get_inventory_summary(db: Session = Depends(get_db)):
     result = db.query(
         func.coalesce(func.sum(EleProducts.quantity), 0).label("total_quantity"),
