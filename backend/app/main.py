@@ -326,4 +326,26 @@ def delete_sale(id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Deleted successfully"}
 
+@app.get("/linegraph")
+def sales_monthly(db: Session = Depends(get_db)):
+
+    data = (
+        db.query(
+            func.date_trunc('month', SalesOrder.order_date).label("month"),
+            SalesOrder.product_name,
+            func.sum(SalesOrder.quantity).label("total_quantity")
+        )
+        .group_by("month", SalesOrder.product_name)
+        .order_by("month")
+        .all()
+    )
+
+    return [
+        {
+            "month": row.month.strftime("%Y-%m"),
+            "product": row.product_name,
+            "quantity": row.total_quantity
+        }
+        for row in data
+    ]
 handler = Mangum(app)

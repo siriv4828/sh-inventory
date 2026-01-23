@@ -69,7 +69,7 @@ export function LeftDrawer() {
           { text: "Purchase Orders", link: "/dashboard/purchase-orders", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
           { text: "Sales", link: "/dashboard/sales", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
           { text: "Suppliers", link: "/dashboard/suppliers", icon: <LocalShippingIcon sx={{ color: "white" }} /> },
-          { text: "AddProducts", link: "/add", icon: <AddBoxIcon sx={{ color: "white" }} /> },
+          // { text: "AddProducts", link: "/add", icon: <AddBoxIcon sx={{ color: "white" }} /> },
         ].map((item) => (
           <ListItem button key={item.text} onClick={() => setMobileOpen(false)}>
             <ListItemButton component={Link} to={item.link} sx={{mt:-2,pb:-2,mr:-2,ml:-2}}>

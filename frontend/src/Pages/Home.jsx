@@ -7,7 +7,10 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  ResponsiveContainer
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts";
 import axios from "axios";
 import { API_URL } from "../api";
@@ -15,11 +18,13 @@ import { API_URL } from "../api";
 export function Home() {
   const [summary, setSummary] = useState({ total: 0, value: 0 });
   const[graphData,setGraphData] =useState([]);
+  const [line_graphData,setLine_graphData] = useState([]);
 
   // Optionally compute inventory summary
-  useEffect(async() => {
+  useEffect(() => {
 loadSummary();  
 loadGraphData();
+loadLineGraphData();
   }, []);
 
  const loadSummary=async()=>{
@@ -35,6 +40,19 @@ const res = await axios.get(`${API_URL}/bargraph`);
 setGraphData(res.data);
 }
 
+const loadLineGraphData=async()=>{
+  axios.get("/linegraph").then((res) => {
+      const raw = res.data;
+
+      // convert to recharts format
+      const grouped = {};
+      raw.forEach((r) => {
+        if (!grouped[r.month]) grouped[r.month] = { month: r.month };
+        grouped[r.month][r.product] = r.quantity;
+      });
+
+      setLine_graphData(Object.values(grouped));
+    });
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
@@ -69,9 +87,20 @@ setGraphData(res.data);
           <Bar dataKey="quantity" />
         </BarChart>
       </ResponsiveContainer>
-    </Paper>
+       <ResponsiveContainer width="100%" height={350}>
+      <LineChart data={line_graphData}>
+        <XAxis dataKey="month" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
 
-      {/* <ProductList /> */}
-    </Box>
+        <Line type="monotone" dataKey="Fan" strokeWidth={2} />
+        <Line type="monotone" dataKey="Bulb" strokeWidth={2} />
+        <Line type="monotone" dataKey="Switch" strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+    </Paper>
+</Box>
   );
 }
+};
