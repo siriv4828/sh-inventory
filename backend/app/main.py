@@ -14,8 +14,8 @@ from mangum import Mangum
 from sqlalchemy import func
 
 from .db import get_db
-from .models import EleProducts, PurchaseOrder
-from .schemas import ProductCreate, PurchaseOrderResponse
+from .models import EleProducts, PurchaseOrder, SalesOrder
+from .schemas import ProductCreate, PurchaseOrderResponse, SalesOrderCreate, SalesOrderResponse
 
 app = FastAPI()
 
@@ -222,29 +222,35 @@ def delete_purchase_order(order_id: int, db: Session = Depends(get_db)):
     return {"message": "Purchase order deleted successfully"}
 
 @app.post("/sales", response_model=SalesOrderResponse)
-def create_sale(data: SalesOrderCreate, db: Session = Depends(get_db)):
-
-    product = db.query(EleProducts).filter(EleProducts.id == data.product_id).first()
+def create_sale(
+    customer_name: str = Form(...),
+    email: str = Form(...),
+    product_id: int = Form(...),
+    quantity: int = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    product = db.query(EleProducts).filter(EleProducts.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    if data.status == "delivered" and product.quantity < data.quantity:
+    if status == "delivered" and product.quantity < quantity:
         raise HTTPException(status_code=400, detail="Not enough stock")
 
     sale = SalesOrder(
-        customer_name=data.customer_name,
-        email=data.email,
+        customer_name=customer_name,
+        email=email,
         product_id=product.id,
         product_name=product.name,
-        quantity=data.quantity,
-        status=data.status
+        quantity=quantity,
+        status=status
     )
 
     db.add(sale)
 
     # 🔥 Decrease stock when delivered
-    if data.status == "delivered":
-        product.quantity -= data.quantity
+    if status == "delivered":
+        product.quantity -= quantity
 
     db.commit()
     db.refresh(sale)
