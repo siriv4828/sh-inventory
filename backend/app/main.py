@@ -139,6 +139,17 @@ def get_inventory_summary(db: Session = Depends(get_db)):
         "total_value": float(result.total_value)
     }
 
+@app.get("/bargraph")
+def get_inventory_bargraph(db: Session = Depends(get_db)):
+    products = db.query(EleProducts.name, EleProducts.quantity).all()
+
+    return [
+        {
+            "name": p.name,
+            "quantity": p.quantity
+        }
+        for p in products
+    ]
 
 @app.post("/purchase-orders", response_model=PurchaseOrderResponse)
 def create_purchase_order(
