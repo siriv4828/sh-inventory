@@ -39,6 +39,19 @@ def serialize_order(o):
         "order_date": o.order_date.isoformat() if o.order_date else None
     }
 
+def serialize_sale(o):
+    return {
+        "id": o.id,
+        "customer_name": o.customer_name,
+        "email": o.email,
+        "product_id": o.product_id,
+        "product_name": o.product_name,
+        "quantity": o.quantity,
+        "status": o.status,
+        "order_date": o.order_date.isoformat() if o.order_date else None
+    }
+
+
 @app.post("/products")
 def create_product(
     name: str = Form(...),
@@ -147,9 +160,6 @@ def create_purchase_order(
    
     return serialize_order(order)
 
-# @app.get("/purchase-orders", response_model=List[PurchaseOrderResponse])
-# def get_purchase_orders(db: Session = Depends(get_db)):
-#     return db.query(PurchaseOrder).order_by(PurchaseOrder.order_date.desc()).all()
 
 @app.get("/purchase-orders", response_model=list[PurchaseOrderResponse])
 def get_orders(db: Session = Depends(get_db)):
@@ -157,18 +167,6 @@ def get_orders(db: Session = Depends(get_db)):
 
     result = []
     return [serialize_order(o) for o in orders]
-    # for o in orders:
-    #     result.append({
-    #         "id": o.id,
-    #         "supplier_name": o.supplier_name,
-    #         "product_id": o.product_id,
-    #         "product_name": o.product_name,
-    #         "quantity": o.quantity,
-    #         "status": o.status,
-    #         "order_date": o.order_date.isoformat() if o.order_date else None
-    #     })
-
-    # return result
 
 
 @app.get("/purchase-orders/{id}", response_model=PurchaseOrderResponse)
@@ -222,5 +220,71 @@ def delete_purchase_order(order_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Purchase order deleted successfully"}
+
+@app.post("/sales", response_model=SalesOrderResponse)
+def create_sale(data: SalesOrderCreate, db: Session = Depends(get_db)):
+
+    product = db.query(EleProducts).filter(EleProducts.id == data.product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    if data.status == "delivered" and product.quantity < data.quantity:
+        raise HTTPException(status_code=400, detail="Not enough stock")
+
+    sale = SalesOrder(
+        customer_name=data.customer_name,
+        email=data.email,
+        product_id=product.id,
+        product_name=product.name,
+        quantity=data.quantity,
+        status=data.status
+    )
+
+    db.add(sale)
+
+    # 🔥 Decrease stock when delivered
+    if data.status == "delivered":
+        product.quantity -= data.quantity
+
+    db.commit()
+    db.refresh(sale)
+
+    return serialize_sale(sale)
+
+@app.get("/sales", response_model=list[SalesOrderResponse])
+def get_sales(db: Session = Depends(get_db)):
+    sales = db.query(SalesOrder).order_by(SalesOrder.id.desc()).all()
+    return [serialize_sale(s) for s in sales]
+
+@app.put("/sales/{id}", response_model=SalesOrderResponse)
+def update_sale_status(id: int, status: str, db: Session = Depends(get_db)):
+
+    sale = db.query(SalesOrder).filter(SalesOrder.id == id).first()
+    if not sale:
+        raise HTTPException(status_code=404, detail="Sale not found")
+
+    product = db.query(EleProducts).filter(EleProducts.id == sale.product_id).first()
+
+    # If changing to delivered → reduce stock
+    if sale.status != "delivered" and status == "delivered":
+        if product.quantity < sale.quantity:
+            raise HTTPException(status_code=400, detail="Not enough stock")
+        product.quantity -= sale.quantity
+
+    sale.status = status
+    db.commit()
+    db.refresh(sale)
+
+    return serialize_sale(sale)
+
+@app.delete("/sales/{id}")
+def delete_sale(id: int, db: Session = Depends(get_db)):
+    sale = db.query(SalesOrder).filter(SalesOrder.id == id).first()
+    if not sale:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    db.delete(sale)
+    db.commit()
+    return {"message": "Deleted successfully"}
 
 handler = Mangum(app)

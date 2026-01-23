@@ -23,8 +23,6 @@ class PurchaseOrder(Base):
     product_id = Column(Integer, ForeignKey("ele_products.id"), nullable=False)
     product_name = Column(String, nullable=False)
 
-    # order_date = Column(Date, server_default=func.current_date())
-    # order_date = Column(DateTime, default=datetime.utcnow)
     order_date = Column(
     DateTime(timezone=True),
     default=lambda: datetime.now(timezone.utc)
@@ -33,3 +31,23 @@ class PurchaseOrder(Base):
     quantity = Column(Integer, nullable=False)
 
     status = Column(String, nullable=False) 
+
+
+class SalesOrder(Base):
+    __tablename__ = "sales_orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    customer_name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+
+    product_id = Column(Integer, ForeignKey("ele_products.id"), nullable=False)
+    product_name = Column(String, nullable=False)
+
+    order_date = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)
+    )
+
+    quantity = Column(Integer, nullable=False)
+    status = Column(String, nullable=False)

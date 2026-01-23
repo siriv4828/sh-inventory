@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class ProductCreate(BaseModel):
     name: str
@@ -14,9 +14,29 @@ class PurchaseOrderResponse(BaseModel):
     product_name: str
     quantity: int
     status: str
-    # date: datetime
-    # order_date: Optional[datetime] = None
     order_date: Optional[str] = None
 
     class Config:
         orm_mode = True 
+
+
+class SalesOrderCreate(BaseModel):
+    customer_name: str
+    email: EmailStr
+    product_id: int
+    quantity: int
+    status: str
+
+
+class SalesOrderResponse(BaseModel):
+    id: int
+    customer_name: str
+    email: str
+    product_id: int
+    product_name: str
+    quantity: int
+    status: str
+    order_date: Optional[str]
+
+    class Config:
+        orm_mode = True
