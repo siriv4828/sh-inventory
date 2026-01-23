@@ -15,7 +15,7 @@ from sqlalchemy import func
 
 from .db import get_db
 from .models import EleProducts, PurchaseOrder, SalesOrder
-from .schemas import ProductCreate, PurchaseOrderResponse, SalesOrderCreate, SalesOrderResponse
+from .schemas import InventorySummary, ProductCreate, PurchaseOrderResponse, SalesOrderCreate, SalesOrderResponse
 
 app = FastAPI()
 
@@ -126,6 +126,19 @@ def update_product(
             "price": item.price
         }
     }
+
+@app.get("/summary",InventorySummary)
+def get_inventory_summary(db: Session = Depends(get_db)):
+    result = db.query(
+        func.coalesce(func.sum(EleProducts.quantity), 0).label("total_quantity"),
+        func.coalesce(func.sum(EleProducts.quantity * EleProducts.price), 0).label("total_value")
+    ).one()
+
+    return {
+        "total_quantity": int(result.total_quantity),
+        "total_value": float(result.total_value)
+    }
+
 
 @app.post("/purchase-orders", response_model=PurchaseOrderResponse)
 def create_purchase_order(

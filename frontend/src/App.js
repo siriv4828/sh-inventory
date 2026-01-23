@@ -12,6 +12,7 @@ import { Login } from "./Pages/Login";
 import { Home } from "./Pages/Home";
 import { UserContext, SnackContext } from "./context/UserContext";
 import Products from "./Pages/Products";
+import Sales from "./Pages/Sales";
 
 export default function App() {
   const [userProfile, setUserProfile] = useState();
@@ -81,6 +82,7 @@ export default function App() {
                 <Route path="products" element={<Products />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="suppliers" element={<Suppliers />} />
+                <Route path="sales" element={<Sales />} />
                 <Route path="purchase-orders" element={<PurchaseOrders />} />
                 <Route path="*" element={<Navigate to="home" replace />} />
 

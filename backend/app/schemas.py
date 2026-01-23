@@ -7,6 +7,11 @@ class ProductCreate(BaseModel):
     quantity: int
     price: float
 
+class InventorySummary(BaseModel):
+    total_quantity: int
+    total_value: float
+
+
 class PurchaseOrderResponse(BaseModel):
     id: int
     supplier_name: str

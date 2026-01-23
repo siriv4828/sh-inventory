@@ -26,10 +26,8 @@ export function Home() {
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
-        📊 Dashboard
+       Dashboard
       </Typography>
-      <Typography variant="body1" gutterBottom>Hello</Typography>
-
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ padding: 2, textAlign: "center" }}>

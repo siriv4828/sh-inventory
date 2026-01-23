@@ -67,6 +67,7 @@ export function LeftDrawer() {
           { text: "Products", link: "/dashboard/products", icon: <DevicesIcon sx={{ color: "white" }} /> },
           { text: "Inventory", link: "/dashboard/inventory", icon: <InventoryIcon sx={{ color: "white" }} /> },
           { text: "Purchase Orders", link: "/dashboard/purchase-orders", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
+          { text: "Sales", link: "/dashboard/sales", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
           { text: "Suppliers", link: "/dashboard/suppliers", icon: <LocalShippingIcon sx={{ color: "white" }} /> },
           { text: "AddProducts", link: "/add", icon: <AddBoxIcon sx={{ color: "white" }} /> },
         ].map((item) => (
