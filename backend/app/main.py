@@ -262,6 +262,15 @@ def get_sales(db: Session = Depends(get_db)):
     sales = db.query(SalesOrder).order_by(SalesOrder.id.desc()).all()
     return [serialize_sale(s) for s in sales]
 
+@app.get("/sales/{id}", response_model=SalesOrderResponse)
+def get_sale(id: int, db: Session = Depends(get_db)):
+
+    sale = db.query(SalesOrder).filter(SalesOrder.id == id).first()
+    if not sale:
+        raise HTTPException(status_code=404, detail="Sales order not found")
+
+    return serialize_sale(sale)
+
 @app.put("/sales/{id}", response_model=SalesOrderResponse)
 def update_sale_status(id: int, status: str, db: Session = Depends(get_db)):
 
