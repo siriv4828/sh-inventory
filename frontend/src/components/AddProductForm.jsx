@@ -64,7 +64,7 @@ export default function AddProductForm() {
           type="submit"
           variant="contained"
           color="primary"
-          sx={{ mt: 2, backgroundColor: "#003135" }}
+          sx={{ mt: 2 }}
           disabled={loading}
         >
           {loading ? "Adding..." : "Add Product"}

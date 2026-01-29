@@ -7,14 +7,16 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid
-} from "@mui/material";
+  Grid,MenuItem,
+useMediaQuery,useTheme} from "@mui/material";
 import { UserContext, SnackContext } from "../context/UserContext";
 
 
 export function Login() {
   const { userProfile, setUserProfile } = useContext(UserContext);
+  const theme = useTheme();
   const { snack, setSnack } = useContext(SnackContext);
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -60,7 +62,7 @@ export function Login() {
         justifyContent: "center"
       }}
     >
-      <Card sx={{ width: 350, borderRadius: 3, boxShadow: 4 }}>
+      <Card sx={{ width: isMobile ? 250 : 350, borderRadius: 3, boxShadow: 4 }}>
         <CardContent>
           <Grid container spacing={2} justifyContent="space-between" alignItems="center">
           <Typography variant="h5" textAlign="center" mb={1}>
@@ -93,6 +95,7 @@ export function Login() {
             />
 
             <TextField
+            select
               fullWidth
               label="Role"
               name="role"
@@ -101,14 +104,17 @@ export function Login() {
               onChange={handleChange}
               margin="normal"
               required
-            />
+            ><MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="manager">Manager</MenuItem>
+              <MenuItem value="staff">Staff</MenuItem>
+            </TextField>
 
             <Button
               type="submit"
               variant="contained"
               size="small"
               fullWidth
-              sx={{ backgroundColor: "#003135", mt: 2 }}
+              sx={{  mt: 2 }}
             >
               Login
             </Button>

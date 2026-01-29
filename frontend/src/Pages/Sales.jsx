@@ -90,7 +90,6 @@ export default function Sales() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          sx={{ backgroundColor: "#003135" }}
           onClick={() => setOpenAdd(true)}
         >
           Add Sales Order

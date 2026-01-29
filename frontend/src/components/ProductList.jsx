@@ -108,7 +108,7 @@ export default function ProductList() {
         </Typography>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#003135" }}>
+            <TableRow >
               <TableCell sx={{ color: "white" }}>ID</TableCell>
               <TableCell sx={{ color: "white" }}>Name</TableCell>
               <TableCell sx={{ color: "white" }}>Quantity</TableCell>
@@ -128,7 +128,7 @@ export default function ProductList() {
                     <Button
                       variant="outlined"
                       size="small"
-                      sx={{ mr: 1, backgroundColor: "#003135", color: "ButtonShadow" }}
+                      sx={{ mr: 1, color: "ButtonShadow" }}
                       onClick={() => handleEditOpen(p)}
                     >
                       Edit

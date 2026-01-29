@@ -141,7 +141,7 @@ const suppliers = [
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          sx={{ backgroundColor: "#003135", mt: 4 }}
+          sx={{ mt: 4 }}
           onClick={() => setAdd_Open(true)}
         >
           Place Order

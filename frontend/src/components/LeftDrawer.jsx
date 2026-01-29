@@ -9,7 +9,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -67,9 +67,8 @@ export function LeftDrawer() {
           { text: "Products", link: "/dashboard/products", icon: <DevicesIcon sx={{ color: "white" }} /> },
           { text: "Inventory", link: "/dashboard/inventory", icon: <InventoryIcon sx={{ color: "white" }} /> },
           { text: "Purchase Orders", link: "/dashboard/purchase-orders", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
-          { text: "Sales", link: "/dashboard/sales", icon: <ShoppingCartIcon sx={{ color: "white" }} /> },
+          { text: "Sales", link: "/dashboard/sales", icon: <PointOfSaleIcon sx={{ color: "white" }} /> },
           { text: "Suppliers", link: "/dashboard/suppliers", icon: <LocalShippingIcon sx={{ color: "white" }} /> },
-          // { text: "AddProducts", link: "/add", icon: <AddBoxIcon sx={{ color: "white" }} /> },
         ].map((item) => (
           <ListItem button key={item.text} onClick={() => setMobileOpen(false)}>
             <ListItemButton component={Link} to={item.link} sx={{mt:-2,pb:-2,mr:-2,ml:-2}}>
@@ -147,7 +146,6 @@ export function LeftDrawer() {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          backgroundColor: "#003135",
         }}
       >
         <Toolbar>

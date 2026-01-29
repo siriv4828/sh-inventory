@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Grid, Paper } from "@mui/material";
+import { Box, Typography, Grid, Paper, Card, CardContent } from "@mui/material";
 import {
   BarChart,
   Bar,
@@ -17,90 +17,107 @@ import { API_URL } from "../api";
 
 export function Home() {
   const [summary, setSummary] = useState({ total: 0, value: 0 });
-  const[graphData,setGraphData] =useState([]);
-  const [line_graphData,setLine_graphData] = useState([]);
+  const [graphData, setGraphData] = useState([]);
+  const [line_graphData, setLine_graphData] = useState([]);
+  // const [products, setProducts] = useState([]);
 
   // Optionally compute inventory summary
   useEffect(() => {
-loadSummary();  
-loadGraphData();
-loadLineGraphData();
+    loadSummary();
+    loadGraphData();
+    loadLineGraphData();
   }, []);
 
- const loadSummary=async()=>{
-   const res = await axios.get(`${API_URL}/summary`);
+  const loadSummary = async () => {
+    const res = await axios.get(`${API_URL}/summary`);
     setSummary({
       total: res.data.total_quantity,
       value: res.data.total_value
     });
   }
 
-const loadGraphData=async()=>{
-const res = await axios.get(`${API_URL}/bargraph`);
-setGraphData(res.data);
-}
+  const loadGraphData = async () => {
+    const res = await axios.get(`${API_URL}/bargraph`);
+    setGraphData(res.data);
+  }
 
-const loadLineGraphData=async()=>{
-  axios.get("/linegraph").then((res) => {
+  const loadLineGraphData = async () => {
+    await axios.get(`${API_URL}/linegraph`).then((res) => {
       const raw = res.data;
 
-      // convert to recharts format
+      // Prepare line/bar chart data
       const grouped = {};
-      raw.forEach((r) => {
-        if (!grouped[r.month]) grouped[r.month] = { month: r.month };
-        grouped[r.month][r.product] = r.quantity;
+      raw.forEach((i) => {
+        if (!grouped[i.month]) grouped[i.month] = { month: i.month };
+        grouped[i.month][i.product] = i.quantity;
       });
-
-      setLine_graphData(Object.values(grouped));
+      const finalData = Object.values(grouped);
+      setLine_graphData(finalData);
     });
+  }
+
+  const products = Array.from(
+    new Set(line_graphData.flatMap((d) => Object.keys(d).filter((k) => k !== "month")))
+  );
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-       Dashboard
+      <Typography variant="h6" gutterBottom>
+        Dashboard
       </Typography>
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6 }>
+        <Grid item xs={12} md={6}>
           <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <Typography variant="h6">Total Products</Typography>
-            <Typography variant="h4">{summary.total}</Typography>
+            <Typography variant="body1" >Total Products</Typography>
+            <Typography variant="body1" fontWeight="bold">{summary.total}</Typography>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <Typography variant="h6">Total Inventory Value</Typography>
-            <Typography variant="h4">₹{summary.value}</Typography>
+            <Typography variant="body1" >Total Inventory Value</Typography>
+            <Typography variant="body1" fontWeight="bold">₹{summary.value}</Typography>
           </Paper>
         </Grid>
       </Grid>
-      <Paper sx={{ p: 2, height: 400 }}>
-      <Typography variant="h6" gutterBottom>
-        Product Quantity Bar Graph
-      </Typography>
+      <Grid container spacing={2} mt={2}>
+        {/* LINE CHART */}
+        <Grid item xs={12} md={12} lg={6} xl={6}>
+          <Card>
+            <CardContent>
+              <Typography>Product Quantity Bar Graph</Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={graphData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="quantity" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
 
-      <ResponsiveContainer width="100%" height="90%">
-        <BarChart data={graphData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="quantity" />
-        </BarChart>
-      </ResponsiveContainer>
-       <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={line_graphData}>
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-
-        <Line type="monotone" dataKey="Fan" strokeWidth={2} />
-        <Line type="monotone" dataKey="Bulb" strokeWidth={2} />
-        <Line type="monotone" dataKey="Switch" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
-    </Paper>
-</Box>
+        {/* BAR CHART */}
+        <Grid item xs={12} md={12} lg={6} xl={6}>
+          <Card>
+            <CardContent>
+              <Typography>Monthly Sales Trend</Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={line_graphData}>
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {products.map((p) => (
+                    <Line key={p} dataKey={p} strokeWidth={2} dot={false} />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
-}
 };

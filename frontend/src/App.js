@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route ,Navigate} from "react-router-do
 import { Dashboard } from "./Pages/Dashboard";
 import AddProductForm from "./components/AddProductForm";
 import { LeftDrawer } from "./components/LeftDrawer";
-import { Box, CssBaseline, Toolbar, AppBar, Typography ,Snackbar,Slide,Alert} from "@mui/material";
+import { Box, CssBaseline, Toolbar, AppBar, Typography ,Snackbar,Slide,Alert, ThemeProvider,createTheme} from "@mui/material";
 import ProductList from "./components/ProductList";
 import Inventory from "./Pages/Inventory";
 import Suppliers from "./Pages/Suppliers";
@@ -22,8 +22,26 @@ export default function App() {
     color: "",
     open: false,
   });
+
+  const theme = createTheme({
+  palette: {
+    primary: { main: "#003135" },
+    secondary: { main: "#f59e0b" },
+    background: {
+      default: "#f9fafb",
+    },
+  },
+  typography: {
+    fontFamily: "Poppins",
+    h6: {
+      fontWeight: 600,
+    },
+  },
+});
+
   return (
     <div>
+      <ThemeProvider theme={theme}>
       <Snackbar
         open={snack.open}
         autoHideDuration={2000}
@@ -92,6 +110,7 @@ export default function App() {
           </Router>
         </SnackContext.Provider>
       </UserContext.Provider>
+ </ThemeProvider>
     </div>
   );
 }
