@@ -164,7 +164,6 @@ const suppliers = [
           </TableHead>
 
           <TableBody>
-            {console.log("orders",orders)}
             {orders.map((o) => (
               <TableRow key={o.id}>
                 <TableCell>{o.supplier_name}</TableCell>

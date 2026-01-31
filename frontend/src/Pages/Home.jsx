@@ -21,14 +21,27 @@ export function Home() {
   const [line_graphData, setLine_graphData] = useState([]);
     const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  // const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [sales, setSales] = useState([]);
 
   // Optionally compute inventory summary
   useEffect(() => {
     loadSummary();
     loadGraphData();
     loadLineGraphData();
+    loadOrders();
+    loadSales();
   }, []);
+
+   const loadSales = async () => {
+    const res = await axios.get(`${API_URL}/sales`);
+    setSales(res.data);
+  };
+
+   const loadOrders = async () => {
+    const res = await fetch(`${API_URL}/purchase-orders`);
+    setOrders(await res.json());
+  };
 
   const loadSummary = async () => {
     const res = await axios.get(`${API_URL}/summary`);
@@ -64,41 +77,60 @@ export function Home() {
   const products = Array.from(
     new Set(line_graphData.flatMap((d) => Object.keys(d).filter((k) => k !== "month")))
   );
+
+  const orderedCount = orders.filter(
+  (order) => order.status === "ordered"
+).length;
+
+const pendingCount = orders.filter(
+  (order) => order.status === "pending"
+).length;
+
+ const dispatchedCount = orders.filter(
+  (order) => order.status === "dispatched"
+).length;
+
+const shippedCount = orders.filter(
+  (order) => order.status === "shipped"
+).length;
+
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h6" gutterBottom>
         Dashboard
       </Typography>
-      {/* <Grid container spacing={2} sx={{ mb: 3 }}> */}
       <Box sx={{ display: "flex", alignContent: "center", justifyContent: "space-around", flexWrap: "wrap", gap: 2 }}>
-        {/* <Grid item xs={12} md={6} lg={4} sx={{ mb: 2, mr: 2 }}> */}
           <Paper sx={{ padding: 2, textAlign: "center" }}>
             <Typography variant="body1" >Total Products</Typography>
             <Typography variant="body1" fontWeight="bold">{summary.total}</Typography>
-          </Paper>
-        {/* </Grid> */}
+          </Paper>  
 
-        {/* <Grid item xs={12} md={6}lg={4} sx={{ mb: 2, mr: 2 }}> */}
-          <Paper sx={{ padding: 2, textAlign: "center" }}>
+          <Paper sx={{ padding: 2, textAlign: "center" }}>            
             <Typography variant="body1" >Total Inventory Value</Typography>
             <Typography variant="body1" fontWeight="bold">₹{summary.value}</Typography>
           </Paper>
            <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <Typography variant="body1" >Total Inventory Value</Typography>
-            <Typography variant="body1" fontWeight="bold">₹{summary.value}</Typography>
+            <Box sx={{display:'flex',flexDirection:'row',gap:2,alignItems:'space-between'}}>
+            <Typography variant="body1" >Ordered Products</Typography>
+            <Typography variant="body1" fontWeight="bold">{orderedCount}</Typography></Box>
+             <Box sx={{display:'flex',flexDirection:'row',gap:2,justifyContent:'space-between'}}>
+               <Typography variant="body1" >Pending Products</Typography>
+            <Typography variant="body1" fontWeight="bold">{pendingCount}</Typography>
+             </Box>
           </Paper>
            <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <Typography variant="body1" >Total Inventory Value</Typography>
-            <Typography variant="body1" fontWeight="bold">₹{summary.value}</Typography>
-          </Paper>
-        {/* </Grid> */}
+            <Box sx={{display:'flex',flexDirection:'row',gap:2,alignItems:'space-between'}}>
+            <Typography variant="body1" >Dispatched Products</Typography>
+            <Typography variant="body1" fontWeight="bold">{dispatchedCount}</Typography></Box>
+             <Box sx={{display:'flex',flexDirection:'row',gap:2,justifyContent:'space-between'}}>
+               <Typography variant="body1" >Shipped Products</Typography>
+            <Typography variant="body1" fontWeight="bold">{shippedCount}</Typography>
+             </Box>
+          </Paper>    
         </Box>
-      {/* </Grid> */}
-      {/* <Grid container spacing={2} mt={2}> */}
+    
         {/* LINE CHART */}
-        {/* <Grid item xs={12} md={12} lg={6} xl={6}> */}
            <Box sx={{ display: "flex", alignContent: "center", flexDirection: isMobile ? "column" : "row", gap: 2,mt:2 }}>
-            {/* <Grid item xs={12} md={12} lg={6} xl={6}> */}
           <Card sx={{ mb: 2, width: '90%' }}>
             <CardContent>
               <Typography>Product Quantity Bar Graph</Typography>
@@ -113,10 +145,8 @@ export function Home() {
               </ResponsiveContainer>
             </CardContent>
           </Card>
-        {/* </Grid> */}
 
         {/* BAR CHART */}
-        {/* <Grid item xs={12} md={12} lg={6} xl={6}> */}
           <Card sx={{ mb: 2, width: '90%' }}>
             <CardContent>
               <Typography>Monthly Sales Trend</Typography>
@@ -133,8 +163,6 @@ export function Home() {
               </ResponsiveContainer>
             </CardContent>
           </Card>
-        {/* </Grid> */}
-      {/* </Grid> */}
       </Box>
     </Box>
   );
