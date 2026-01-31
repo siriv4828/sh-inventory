@@ -39,6 +39,7 @@ const suppliers = [
   // ---------------- FETCH DATA ----------------
   const loadOrders = async () => {
     const res = await fetch(`${API}/purchase-orders`);
+    console.log("res",res.json());
     setOrders(await res.json());
   };
 
