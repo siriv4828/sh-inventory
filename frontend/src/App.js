@@ -42,6 +42,7 @@ export default function App() {
   return (
     <div>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
       <Snackbar
         open={snack.open}
         autoHideDuration={2000}
