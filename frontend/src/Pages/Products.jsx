@@ -1,4 +1,4 @@
-import { useEffect, useState,useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import {
   Button,
@@ -12,10 +12,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  IconButton
+  IconButton,Box
 } from "@mui/material";
-import {API_URL} from "../api";
-import { UserContext,SnackContext } from "../context/UserContext";
+import { API_URL } from "../api";
+import { UserContext, SnackContext } from "../context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -26,8 +26,8 @@ export default function Products() {
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
-  const {setSnack}=useContext(SnackContext);
-  
+  const { setSnack } = useContext(SnackContext);
+
 
   const [form, setForm] = useState({
     name: "",
@@ -64,44 +64,44 @@ export default function Products() {
   };
 
   const validate = () => {
-  if (!form.name.trim()) {
-    setSnack({
-       message: "Product name is required",
-    color: "error",
-    open: true,
-    });
-    return false;
-  }
+    if (!form.name.trim()) {
+      setSnack({
+        message: "Product name is required",
+        color: "error",
+        open: true,
+      });
+      return false;
+    }
 
-  if (!form.quantity || form.quantity < 0) {
-    setSnack({
-       message: "Quantity must be greater than 0",
-    color: "error",
-    open: true,
-    });
-    return false;
-  }
+    if (!form.quantity || form.quantity < 0) {
+      setSnack({
+        message: "Quantity must be greater than 0",
+        color: "error",
+        open: true,
+      });
+      return false;
+    }
 
-  if (!form.price || form.price < 0) {
-    setSnack({
-       message: "Price must be greater than 0",
-    color: "error",
-    open: true,
-    });
-    return false;
-  }
+    if (!form.price || form.price < 0) {
+      setSnack({
+        message: "Price must be greater than 0",
+        color: "error",
+        open: true,
+      });
+      return false;
+    }
 
-  if (!editMode && !form.image) {
-    setSnack({
-       message: "Please select a product image",
-    color: "error",
-    open: true,
-    });
-    return false;
-  }
+    if (!editMode && !form.image) {
+      setSnack({
+        message: "Please select a product image",
+        color: "error",
+        open: true,
+      });
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
   const handleSubmit = async () => {
     if (!validate()) return;
     const data = new FormData();
@@ -118,9 +118,9 @@ export default function Products() {
 
     setOpen(false);
     setSnack({
-        message: editMode ? "Product updated" : "Product added",
-    color: "success",
-    open: true,
+      message: editMode ? "Product updated" : "Product added",
+      color: "success",
+      open: true,
     });
     loadProducts();
   };
@@ -134,16 +134,15 @@ export default function Products() {
   return (
     <div style={{ padding: 20 }}>
       {/* Add button */}
-      <Button
-        variant="contained"
-        style={{ float: "right", marginBottom: 10 , backgroundColor: "#003135" }}
-        onClick={openAdd}
-      >
-        + Add Product
-      </Button>
-
-      <h2>Products</h2>
-
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <h2>Products</h2>
+        <Button
+          variant="contained"
+          style={{ float: "right", marginBottom: 10, backgroundColor: "#003135" }}
+          onClick={openAdd}
+        >
+          + Add Product
+        </Button></Box>
       <Table>
         <TableHead>
           <TableRow>
@@ -208,7 +207,7 @@ export default function Products() {
             value={form.price}
             onChange={(e) => setForm({ ...form, price: e.target.value })}
           />
-<br/><br/>
+          <br /><br />
           <input
             type="file"
             onChange={(e) => setForm({ ...form, image: e.target.files[0] })}

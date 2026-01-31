@@ -45,7 +45,6 @@ export function Home() {
 
   const loadSummary = async () => {
     const res = await axios.get(`${API_URL}/summary`);
-    console.log("summary",res.data);
     setSummary({
       total: res.data.total_quantity,
       value: res.data.total_value
@@ -55,7 +54,6 @@ export function Home() {
   const loadGraphData = async () => {
     const res = await axios.get(`${API_URL}/bargraph`);
     setGraphData(res.data);
-    console.log("res",res.data);
   }
 
   const loadLineGraphData = async () => {
@@ -69,7 +67,6 @@ export function Home() {
         grouped[i.month][i.product] = i.quantity;
       });
       const finalData = Object.values(grouped);
-      console.log(finalData);
       setLine_graphData(finalData);
     });
   }
@@ -101,30 +98,30 @@ const shippedCount = orders.filter(
       </Typography>
       <Box sx={{ display: "flex", alignContent: "center", justifyContent: "space-around", flexWrap: "wrap", gap: 2 }}>
           <Paper sx={{ padding: 2, textAlign: "center" }}>
-            <Typography variant="body1" >Total Products</Typography>
-            <Typography variant="body1" fontWeight="bold">{summary.total}</Typography>
+            <Typography >Total Products</Typography>
+            <Typography fontWeight="bold">{summary.total}</Typography>
           </Paper>  
 
           <Paper sx={{ padding: 2, textAlign: "center" }}>            
-            <Typography variant="body1" >Total Inventory Value</Typography>
-            <Typography variant="body1" fontWeight="bold">₹{summary.value}</Typography>
+            <Typography >Total Inventory Value</Typography>
+            <Typography fontWeight="bold">₹{summary.value}</Typography>
           </Paper>
            <Paper sx={{ padding: 2, textAlign: "center" }}>
             <Box sx={{display:'flex',flexDirection:'row',gap:2,alignItems:'space-between'}}>
-            <Typography variant="body1" >Ordered Products</Typography>
-            <Typography variant="body1" fontWeight="bold">{orderedCount}</Typography></Box>
+            <Typography>Ordered Products</Typography>
+            <Typography fontWeight="bold">{orderedCount}</Typography></Box>
              <Box sx={{display:'flex',flexDirection:'row',gap:2,justifyContent:'space-between'}}>
-               <Typography variant="body1" >Pending Products</Typography>
-            <Typography variant="body1" fontWeight="bold">{pendingCount}</Typography>
+               <Typography >Pending Products</Typography>
+            <Typography fontWeight="bold">{pendingCount}</Typography>
              </Box>
           </Paper>
            <Paper sx={{ padding: 2, textAlign: "center" }}>
             <Box sx={{display:'flex',flexDirection:'row',gap:2,alignItems:'space-between'}}>
-            <Typography variant="body1" >Dispatched Products</Typography>
-            <Typography variant="body1" fontWeight="bold">{dispatchedCount}</Typography></Box>
+            <Typography >Dispatched Products</Typography>
+            <Typography fontWeight="bold">{dispatchedCount}</Typography></Box>
              <Box sx={{display:'flex',flexDirection:'row',gap:2,justifyContent:'space-between'}}>
-               <Typography variant="body1" >Shipped Products</Typography>
-            <Typography variant="body1" fontWeight="bold">{shippedCount}</Typography>
+               <Typography >Shipped Products</Typography>
+            <Typography fontWeight="bold">{shippedCount}</Typography>
              </Box>
           </Paper>    
         </Box>

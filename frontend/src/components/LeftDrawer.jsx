@@ -93,13 +93,13 @@ export function LeftDrawer() {
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Box px={5} py={1}>
-          <Typography fontWeight="bold">{userProfile?.name}</Typography>
+          <Typography fontWeight="bold">{userProfile?.name}{"----"}{userProfile?.role}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {userProfile?.phone}
+           {"ph"}{"----"} {userProfile?.phone}
           </Typography>
-           <Typography variant="body2" color="text.secondary">
+           {/* <Typography variant="body2" color="text.secondary">
             {userProfile?.role}
-          </Typography>
+          </Typography> */}
         </Box></Menu>
       </ListItem>
       <ListItem button key={"logout"}>
@@ -112,7 +112,7 @@ export function LeftDrawer() {
     </>);
   return (
     // left drawer
-    <Box >
+    <Box>
       <Dialog
         open={showLogoutDailog}
         onClose={() => {
