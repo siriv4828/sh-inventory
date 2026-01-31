@@ -39,7 +39,6 @@ const suppliers = [
   // ---------------- FETCH DATA ----------------
   const loadOrders = async () => {
     const res = await fetch(`${API}/purchase-orders`);
-    console.log("res",res.json());
     setOrders(await res.json());
   };
 
@@ -165,6 +164,7 @@ const suppliers = [
           </TableHead>
 
           <TableBody>
+            {console.log("orders",orders)}
             {orders.map((o) => (
               <TableRow key={o.id}>
                 <TableCell>{o.supplier_name}</TableCell>
