@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Box, Button, Paper, Typography, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -10,10 +10,8 @@ import { SnackContext } from "../context/UserContext";
 import axios from "axios";
 import { API_URL } from "../api";
 
-const API = API_URL; // change
-
-export default function Sales() {
-      const {setSnack}=useContext(SnackContext);
+export function Sales() {
+  const { setSnack } = useContext(SnackContext);
   const [sales, setSales] = useState([]);
   const [products, setProducts] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
@@ -29,12 +27,12 @@ export default function Sales() {
   });
 
   const loadSales = async () => {
-    const res = await axios.get(`${API}/sales`);
+    const res = await axios.get(`${API_URL}/sales`);
     setSales(res.data);
   };
 
-   const loadProducts = async () => {
-    const res = await fetch(`${API}/products`);
+  const loadProducts = async () => {
+    const res = await fetch(`${API_URL}/products`);
     setProducts(await res.json());
   };
 
@@ -44,8 +42,7 @@ export default function Sales() {
   }, [sales]);
 
   const handleAdd = async () => {
-    if(!form.customer_name || !form.email || !form.product_id || !form.quantity )
-    {
+    if (!form.customer_name || !form.email || !form.product_id || !form.quantity) {
       setSnack({
         message: "Please fill all fields",
         color: "red",
@@ -62,21 +59,21 @@ export default function Sales() {
     data.append("quantity", form.quantity);
     data.append("status", form.status);
 
-    axios.post(`${API}/sales`, data)
+    axios.post(`${API_URL}/sales`, data)
     setOpenAdd(false)
     setSnack({
-        message: "Sales Order Added Successfully",
-        color: "green",
-        type: "success",
-        open: true,
-        });
+      message: "Sales Order Added Successfully",
+      color: "green",
+      type: "success",
+      open: true,
+    });
     loadSales();
 
   };
 
   const handleEdit = async () => {
     await axios.put(
-      `${API}/sales/${selected.id}?status=${form.status}`
+      `${API_URL}/sales/${selected.id}?status=${form.status}`
     );
     setOpenEdit(false);
     loadSales();
@@ -99,53 +96,32 @@ export default function Sales() {
       {/* Sales list */}
       <Grid container spacing={2}>
         {sales.map(s => (
-        //   <Grid item xs={12} md={12} lg={12} xl={12} key={s.id}  alignContent="column" alignItems="center">
-        <Box key={s.id} mb={2} width="100%" display="inline">
+          <Box key={s.id} mb={2} width="100%" display="inline">
             <Paper sx={{ p: 2, position: "relative" }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Grid item xs={12} md={6} lg={6} alignContent="space-between">
-                   <Typography>
+                  <Typography>
                     <b>{s.customer_name} - {s.email}</b>
-                    </Typography> 
-                     <IconButton
-                sx={{ position: "absolute", top: 8, right: 8 }}
-                onClick={() => {
-                  setSelected(s);
-                  setForm({ status: s.status });
-                  setOpenEdit(true);
-                }}
-              >
-                <EditIcon />
-              </IconButton>      
-                    <Typography>
-                        {s.quantity}{ "  "}{s.product_name}
-                    </Typography>
-                    <Typography>
-                        <b>{s.status}</b>
-                    </Typography>
-                    </Grid>
-                    </Box>
-              {/* <IconButton
-                sx={{ position: "absolute", top: 8, right: 8 }}
-                onClick={() => {
-                  setSelected(s);
-                  setForm({ status: s.status });
-                  setOpenEdit(true);
-                }}
-              >
-                <EditIcon />
-              </IconButton> */}
-
-              {/* <Typography><b>Customer:</b> {s.customer_name}</Typography>
-              <Typography><b>Email:</b> {s.email}</Typography>
-              <Typography><b>Product:</b> {s.product_name}</Typography>
-              <Typography><b>Qty:</b> {s.quantity}</Typography>
-              <Typography><b>Status:</b> {s.status}</Typography>
-              <Typography variant="caption">
-                {new Date(s.order_date).toLocaleString()}
-              </Typography> */}
+                  </Typography>
+                  <IconButton
+                    sx={{ position: "absolute", top: 8, right: 8 }}
+                    onClick={() => {
+                      setSelected(s);
+                      setForm({ status: s.status });
+                      setOpenEdit(true);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <Typography>
+                    {s.quantity}{"  "}{s.product_name}
+                  </Typography>
+                  <Typography>
+                    <b>{s.status}</b>
+                  </Typography>
+                </Grid>
+              </Box>
             </Paper>
-          {/* </Grid> */}
           </Box>
         ))}
       </Grid>
@@ -163,9 +139,9 @@ export default function Sales() {
           <TextField select fullWidth label="Product Name" margin="dense"
             onChange={e => setForm({ ...form, product_id: e.target.value })} >
             {products.map(p => (
-                <MenuItem key={p.id} value={p.id}>{p.name} (ID: {p.id})</MenuItem>
+              <MenuItem key={p.id} value={p.id}>{p.name} (ID: {p.id})</MenuItem>
             ))}
-                </TextField>
+          </TextField>
 
           <TextField fullWidth label="Quantity" type="number" margin="dense"
             onChange={e => setForm({ ...form, quantity: e.target.value })} />
@@ -186,26 +162,26 @@ export default function Sales() {
 
       {/* Edit Dialog (status only) */}
       <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
-         <Box mr={6} ml={6}>
-        <DialogTitle>Update Status</DialogTitle>
-        <DialogContent>
-           
-          <TextField
-            select
-            fullWidth
-            label="Status"
-            value={form.status}
-            onChange={e => setForm({ status: e.target.value })}
-          >
-            <MenuItem value="dispatched">Dispatched</MenuItem>
-            <MenuItem value="shipped">Shipped</MenuItem>
-            <MenuItem value="delivered">Delivered</MenuItem>
-          </TextField>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenEdit(false)}><Typography color="#003135">Cancel</Typography></Button>
-          <Button variant="contained" sx={{ backgroundColor: "#003135" }} onClick={handleEdit}>Update</Button>
-        </DialogActions>
+        <Box mr={6} ml={6}>
+          <DialogTitle>Update Status</DialogTitle>
+          <DialogContent>
+
+            <TextField
+              select
+              fullWidth
+              label="Status"
+              value={form.status}
+              onChange={e => setForm({ status: e.target.value })}
+            >
+              <MenuItem value="dispatched">Dispatched</MenuItem>
+              <MenuItem value="shipped">Shipped</MenuItem>
+              <MenuItem value="delivered">Delivered</MenuItem>
+            </TextField>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenEdit(false)}><Typography color="#003135">Cancel</Typography></Button>
+            <Button variant="contained" sx={{ backgroundColor: "#003135" }} onClick={handleEdit}>Update</Button>
+          </DialogActions>
         </Box>
       </Dialog>
     </Box>

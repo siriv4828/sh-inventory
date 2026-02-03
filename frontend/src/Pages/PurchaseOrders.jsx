@@ -1,4 +1,4 @@
-import { useEffect, useState,useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Box, Button, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent,
@@ -10,24 +10,21 @@ import { API_URL } from "../api";
 import { SnackContext } from "../context/UserContext";
 import axios from "axios";
 
-const API = API_URL;
-
-export default function PurchaseOrdersPage() {
-   const {setSnack}=useContext(SnackContext);
+export function PurchaseOrders() {
+  const { setSnack } = useContext(SnackContext);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [add_open, setAdd_Open] = useState(false);
   const [edit_open, setEdit_Open] = useState(false);
   const [id, setId] = useState(null);
-  // const isEdit = Boolean(editing);
 
-const suppliers = [
-  { id: 1, name: "ABC Electronics" },
-  { id: 2, name: "Bright Supplies" },
-  { id: 3, name: "Smart Traders" },
-  { id: 4, name: "Global Tech" },
-  { id: 5, name: "NextGen Distributors" },
-];
+  const suppliers = [
+    { id: 1, name: "ABC Electronics" },
+    { id: 2, name: "Bright Supplies" },
+    { id: 3, name: "Smart Traders" },
+    { id: 4, name: "Global Tech" },
+    { id: 5, name: "NextGen Distributors" },
+  ];
 
   const [form, setForm] = useState({
     supplier_name: "",
@@ -38,12 +35,12 @@ const suppliers = [
 
   // ---------------- FETCH DATA ----------------
   const loadOrders = async () => {
-    const res = await fetch(`${API}/purchase-orders`);
+    const res = await fetch(`${API_URL}/purchase-orders`);
     setOrders(await res.json());
   };
 
   const loadProducts = async () => {
-    const res = await fetch(`${API}/products`);
+    const res = await fetch(`${API_URL}/products`);
     setProducts(await res.json());
   };
 
@@ -70,7 +67,7 @@ const suppliers = [
     data.append("quantity", form.quantity);
     data.append("status", form.status);
 
-    axios.post(`${API}/purchase-orders`, data)
+    axios.post(`${API_URL}/purchase-orders`, data)
     setAdd_Open(false);
     setSnack({
       message: "Order Placed Successfully",
@@ -89,7 +86,7 @@ const suppliers = [
   };
 
   const handleDelete = async (order) => {
-    await axios.delete(`${API}/purchase-orders/${order.id}`);
+    await axios.delete(`${API_URL}/purchase-orders/${order.id}`);
     setSnack({
       message: "Order Deleted Successfully",
       color: "green",
@@ -111,14 +108,14 @@ const suppliers = [
     console.log("Form set to:", form);
     setEdit_Open(true);
   };
- const handleEditSubmit = async () => {
-  const data = new FormData();
+  const handleEditSubmit = async () => {
+    const data = new FormData();
     data.append("supplier_name", form.supplier_name);
     data.append("product_id", form.product_id);
     data.append("quantity", form.quantity);
     data.append("status", form.status);
 
-    axios.put(`${API}/purchase-orders/${id}`, data)
+    axios.put(`${API_URL}/purchase-orders/${id}`, data)
     setSnack({
       message: "Status Updated Successfully",
       color: "green",
@@ -126,7 +123,7 @@ const suppliers = [
       open: true,
     });
     setEdit_Open(false);
- setForm({
+    setForm({
       supplier_name: "",
       product_id: "",
       quantity: "",
@@ -168,16 +165,16 @@ const suppliers = [
               <TableRow key={o.id}>
                 <TableCell>{o.supplier_name}</TableCell>
                 <TableCell>
-                   {o.product_name}
+                  {o.product_name}
                 </TableCell>
                 <TableCell>{o.quantity}</TableCell>
                 <TableCell>{o.status}</TableCell>
                 <TableCell>{o.order_date}</TableCell>
-                               <TableCell>
+                <TableCell>
                   <Button size="small" onClick={() => handleEdit(o)}>
                     Edit
                   </Button></TableCell><TableCell>
-                   <Button size="small" onClick={() => handleDelete(o)}>
+                  <Button size="small" onClick={() => handleDelete(o)}>
                     Delete
                   </Button>
                 </TableCell>
@@ -190,8 +187,8 @@ const suppliers = [
       {/* DIALOG */}
       <Dialog open={add_open} onClose={() => setAdd_Open(false)} fullWidth>
         <DialogTitle>
-   Place Order
-          
+          Place Order
+
         </DialogTitle>
 
         <DialogContent sx={{ mt: 1 }}>
@@ -204,13 +201,13 @@ const suppliers = [
               setForm({ ...form, supplier_name: e.target.value })
             }
             margin="dense"
-          > 
-          {suppliers.map((p) => (
+          >
+            {suppliers.map((p) => (
               <MenuItem key={p.id} value={p.name}>
-                 {p.name}
+                {p.name}
               </MenuItem>
             ))}
-            </TextField>
+          </TextField>
 
           <TextField
             fullWidth
@@ -224,7 +221,7 @@ const suppliers = [
           >
             {products.map((p) => (
               <MenuItem key={p.id} value={p.id}>
-                 {p.name}
+                {p.name}
               </MenuItem>
             ))}
           </TextField>
@@ -244,7 +241,7 @@ const suppliers = [
             fullWidth
             select
             label="Status"
-value={form.status}
+            value={form.status}
             onChange={(e) =>
               setForm({ ...form, status: e.target.value })
             }
@@ -263,9 +260,9 @@ value={form.status}
           </Button>
         </DialogActions>
       </Dialog>
-        <Dialog open={edit_open} onClose={() => setEdit_Open(false)} fullWidth>
+      <Dialog open={edit_open} onClose={() => setEdit_Open(false)} fullWidth>
         <DialogTitle>
-   Edit Order
+          Edit Order
         </DialogTitle>
 
         <DialogContent sx={{ mt: 1 }}>
@@ -279,13 +276,13 @@ value={form.status}
               setForm({ ...form, supplier_name: e.target.value })
             }
             margin="dense"
-          > 
-          {suppliers.map((p) => (
+          >
+            {suppliers.map((p) => (
               <MenuItem key={p.id} value={p.name}>
-                 {p.name}
+                {p.name}
               </MenuItem>
             ))}
-            </TextField>
+          </TextField>
 
           <TextField
             fullWidth
@@ -300,7 +297,7 @@ value={form.status}
           >
             {products.map((p) => (
               <MenuItem key={p.id} value={p.id}>
-                 {p.name}
+                {p.name}
               </MenuItem>
             ))}
           </TextField>
@@ -336,7 +333,7 @@ value={form.status}
 
         <DialogActions>
           <Button onClick={() => setEdit_Open(false)}><Typography color="#003135">Cancel</Typography></Button>
-          <Button variant="contained"  sx={{ backgroundColor: "#003135" }} onClick={handleEditSubmit}>
+          <Button variant="contained" sx={{ backgroundColor: "#003135" }} onClick={handleEditSubmit}>
             Edit The Order
           </Button>
         </DialogActions>

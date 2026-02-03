@@ -16,7 +16,7 @@ const getStock = (qty) => {
   return { label: "HIGH", color: "success" };
 };
 
-export default function ProductCards() {
+export function Inventory() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {

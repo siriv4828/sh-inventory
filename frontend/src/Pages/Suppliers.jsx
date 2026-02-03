@@ -13,13 +13,13 @@ const suppliers = [
     email: "info@abcelectronics.com",
     mobile: "+91 98765 43210",
     logo: "https://via.placeholder.com/80?text=ABC"
-},
+  },
   {
     name: "Bright Supplies",
     email: "info@brightsupplies.com",
     mobile: "+91 91234 56789",
     logo: "https://via.placeholder.com/80?text=BS"
-},
+  },
   {
     name: "Smart Traders",
     email: "sales@smarttraders.com",
@@ -53,7 +53,7 @@ const stringToColor = (string) => {
   return color;
 };
 
-export default function Suppliers() {
+export function Suppliers() {
   return (
     <Box p={3}>
       <Typography variant="h5" mb={2}>
@@ -74,19 +74,19 @@ export default function Suppliers() {
                 "&:hover": { transform: "scale(1.03)" }
               }}
             >
-             <Avatar
-  src={s.logo}
-  sx={{
-    width: 80,
-    height: 80,
-    margin: "0 auto",
-    mb: 2,
-    bgcolor: stringToColor(s.name),
-    fontSize: 50
-    }}
->
-  {s.name.charAt(0)}
-</Avatar>
+              <Avatar
+                src={s.logo}
+                sx={{
+                  width: 80,
+                  height: 80,
+                  margin: "0 auto",
+                  mb: 2,
+                  bgcolor: stringToColor(s.name),
+                  fontSize: 50
+                }}
+              >
+                {s.name.charAt(0)}
+              </Avatar>
 
 
               <CardContent>

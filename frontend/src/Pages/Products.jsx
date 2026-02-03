@@ -19,9 +19,7 @@ import { UserContext, SnackContext } from "../context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const API = API_URL;
-
-export default function Products() {
+export function Products() {
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -41,7 +39,7 @@ export default function Products() {
   }, []);
 
   const loadProducts = async () => {
-    const res = await axios.get(`${API}/products`);
+    const res = await axios.get(`${API_URL}/products`);
     setProducts(res.data);
   };
 
@@ -111,9 +109,9 @@ export default function Products() {
     if (form.image) data.append("image", form.image);
 
     if (editMode) {
-      await axios.put(`${API}/products/${currentId}`, data);
+      await axios.put(`${API_URL}/products/${currentId}`, data);
     } else {
-      await axios.post(`${API}/products`, data);
+      await axios.post(`${API_URL}/products`, data);
     }
 
     setOpen(false);
@@ -127,7 +125,7 @@ export default function Products() {
 
   const deleteProduct = async (id) => {
     if (!window.confirm("Delete product?")) return;
-    await axios.delete(`${API}/products/${id}`);
+    await axios.delete(`${API_URL}/products/${id}`);
     loadProducts();
   };
 

@@ -1,12 +1,9 @@
 import React, { useState, useContext } from "react";
-import { Drawer,Menu, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar,Divider,useTheme,useMediaQuery,Dialog,DialogActions,DialogContentText,DialogContent ,Box,AppBar,IconButton,CssBaseline,Button,Typography} from "@mui/material";
+import { Drawer, Menu, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Divider, useTheme, useMediaQuery, Dialog, DialogActions, DialogContentText, DialogContent, Box, AppBar, IconButton, CssBaseline, Button, Typography } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DevicesIcon from "@mui/icons-material/Devices";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PersonIcon from "@mui/icons-material/Person";
-import GroupsIcon from "@mui/icons-material/Groups";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
@@ -17,7 +14,7 @@ import { UserContext, SnackContext } from "../context/UserContext";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 export function LeftDrawer() {
-   const { userProfile, setUserProfile } = useContext(UserContext);
+  const { userProfile, setUserProfile } = useContext(UserContext);
   const { snack, setSnack } = useContext(SnackContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -26,7 +23,7 @@ export function LeftDrawer() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showLogoutDailog, setShowLogoutDailog] = useState(false);
-   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const handleOpen = (event) => {
@@ -71,7 +68,7 @@ export function LeftDrawer() {
           { text: "Suppliers", link: "/dashboard/suppliers", icon: <LocalShippingIcon sx={{ color: "white" }} /> },
         ].map((item) => (
           <ListItem button key={item.text} onClick={() => setMobileOpen(false)}>
-            <ListItemButton component={Link} to={item.link} sx={{mt:-2,pb:-2,mr:-2,ml:-2}}>
+            <ListItemButton component={Link} to={item.link} sx={{ mt: -2, pb: -2, mr: -2, ml: -2 }}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               {!collapsed && <ListItemText primary={item.text} />}
             </ListItemButton>
@@ -80,30 +77,27 @@ export function LeftDrawer() {
       </List>
       <Divider />
       <Box sx={{ flexGrow: 1, }}></Box>
-     <ListItem button key={"name"}>
-        <ListItemButton onClick={handleOpen}sx={{mt:-2,pb:-2,mr:-2,ml:-2}}>
+      <ListItem button key={"name"}>
+        <ListItemButton onClick={handleOpen} sx={{ mt: -2, pb: -2, mr: -2, ml: -2 }}>
           <ListItemIcon><AccountCircleIcon sx={{ color: "white" }} /></ListItemIcon>
           {!collapsed && <ListItemText primary={userProfile?.name} />}
         </ListItemButton>
-          <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Box px={5} py={1}>
-          <Typography fontWeight="bold">{userProfile?.name}{"----"}{userProfile?.role}</Typography>
-          <Typography variant="body2" color="text.secondary">
-           {"ph"}{"----"} {userProfile?.phone}
-          </Typography>
-           {/* <Typography variant="body2" color="text.secondary">
-            {userProfile?.role}
-          </Typography> */}
-        </Box></Menu>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Box px={5} py={1}>
+            <Typography fontWeight="bold">{userProfile?.name}{"----"}{userProfile?.role}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {"ph"}{"----"} {userProfile?.phone}
+            </Typography>
+          </Box></Menu>
       </ListItem>
       <ListItem button key={"logout"}>
-        <ListItemButton onClick={() => setShowLogoutDailog(true)} sx={{mt:-2,pb:-2,mr:-2,ml:-2}}>
+        <ListItemButton onClick={() => setShowLogoutDailog(true)} sx={{ mt: -2, pb: -2, mr: -2, ml: -2 }}>
           <ListItemIcon><LogoutIcon sx={{ color: "white" }} /></ListItemIcon>
           {!collapsed && <ListItemText primary={"logout"} />}
         </ListItemButton>
