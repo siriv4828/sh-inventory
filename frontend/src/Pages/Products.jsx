@@ -25,7 +25,7 @@ export function Products() {
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const { setSnack } = useContext(SnackContext);
-
+  const { userProfile } = useContext(UserContext);
 
   const [form, setForm] = useState({
     name: "",
@@ -134,13 +134,13 @@ export function Products() {
       {/* Add button */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
         <h2>Products</h2>
-        <Button
+       {userProfile?.role === "admin" && <Button
           variant="contained"
           style={{ float: "right", marginBottom: 10, backgroundColor: "#003135" }}
           onClick={openAdd}
         >
           + Add Product
-        </Button></Box>
+        </Button>}</Box>
       <Table>
         <TableHead>
           <TableRow>
@@ -148,7 +148,7 @@ export function Products() {
             <TableCell>Name</TableCell>
             <TableCell>Qty</TableCell>
             <TableCell>Price</TableCell>
-            <TableCell>Actions</TableCell>
+           {userProfile?.role === "admin" && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
 
@@ -161,6 +161,7 @@ export function Products() {
               <TableCell>{p.name}</TableCell>
               <TableCell>{p.quantity}</TableCell>
               <TableCell>₹{p.price}</TableCell>
+              {userProfile?.role === "admin" &&
               <TableCell>
                 <IconButton onClick={() => openEdit(p)}>
                   <EditIcon />
@@ -168,7 +169,7 @@ export function Products() {
                 <IconButton onClick={() => deleteProduct(p.id)}>
                   <DeleteIcon color="error" />
                 </IconButton>
-              </TableCell>
+              </TableCell>}
             </TableRow>
           ))}
         </TableBody>

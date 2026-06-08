@@ -3,15 +3,19 @@ import {
   Box, Button, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent,
   DialogActions, TextField, MenuItem,
-  Typography
+  Typography,
+  IconButton
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { API_URL } from "../api";
-import { SnackContext } from "../context/UserContext";
+import { SnackContext,UserContext } from "../context/UserContext";
 import axios from "axios";
 
 export function PurchaseOrders() {
   const { setSnack } = useContext(SnackContext);
+  const { userProfile } = useContext(UserContext);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [add_open, setAdd_Open] = useState(false);
@@ -135,14 +139,15 @@ export function PurchaseOrders() {
     <Box p={3}>
       <Box display="flex" justifyContent="space-between" mb={2}>
         <h2>Purchase Orders</h2>
-        <Button
+        {(userProfile?.role === "manager" || userProfile?.role === "admin" )&& 
+       ( <Button
           variant="contained"
           startIcon={<AddIcon />}
           sx={{ mt: 4 }}
           onClick={() => setAdd_Open(true)}
         >
           Place Order
-        </Button>
+        </Button>)}
       </Box>
 
       {/* TABLE */}
@@ -155,8 +160,8 @@ export function PurchaseOrders() {
               <TableCell>Quantity</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Edit</TableCell>
-              <TableCell>Delete</TableCell>
+               {(userProfile?.role === "manager" || userProfile?.role === "admin") && 
+              (<TableCell>Actions</TableCell>)}
             </TableRow>
           </TableHead>
 
@@ -170,14 +175,15 @@ export function PurchaseOrders() {
                 <TableCell>{o.quantity}</TableCell>
                 <TableCell>{o.status}</TableCell>
                 <TableCell>{o.order_date}</TableCell>
-                <TableCell>
-                  <Button size="small" onClick={() => handleEdit(o)}>
-                    Edit
-                  </Button></TableCell><TableCell>
-                  <Button size="small" onClick={() => handleDelete(o)}>
-                    Delete
-                  </Button>
-                </TableCell>
+                 {(userProfile?.role === "manager" || userProfile?.role === "admin") && 
+                (<TableCell>
+                  <IconButton size="small" onClick={() => handleEdit(o)}>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                  <IconButton size="small" onClick={() => handleDelete(o)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </TableCell>)}
               </TableRow>
             ))}
           </TableBody>

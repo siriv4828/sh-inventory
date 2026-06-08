@@ -20,9 +20,17 @@ from .schemas import InventorySummary, ProductCreate, PurchaseOrderResponse, Sal
 app = FastAPI()
 
 # CORS Middleware
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://d11ll76vikdfdn.cloudfront.net"],  # or ["*"] for quick testing
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
