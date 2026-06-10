@@ -2,12 +2,10 @@ import os
 import sys
 from typing import List
 
-from .s3 import upload_image
-
 # Add app/vendor to sys.path so vendored/site-packages are importable in Lambda
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "vendor"))
 
-from fastapi import  FastAPI, UploadFile, File, Form, Depends, HTTPException
+from fastapi import  FastAPI, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from mangum import Mangum
@@ -65,16 +63,12 @@ def create_product(
     name: str = Form(...),
     quantity: int = Form(...),
     price: float = Form(...),
-    image: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    image_url = upload_image(image)
-
     product = EleProducts(
         name=name,
         quantity=quantity,
-        price=price,
-        image=image_url
+        price=price
     )
 
     db.add(product)
@@ -100,7 +94,6 @@ def update_product(
     name: str = Form(None),
     quantity: int = Form(None),
     price: float = Form(None),
-    image: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
     item = db.query(EleProducts).filter(EleProducts.id == id).first()
@@ -117,10 +110,6 @@ def update_product(
     if price is not None:
         item.price = price
 
-    if image:
-        image_url = upload_image(image)
-        item.image = image_url
-
     db.commit()
     db.refresh(item)
 
@@ -129,7 +118,6 @@ def update_product(
         "product": {
             "id": item.id,
             "name": item.name,
-            "image": item.image,
             "quantity": item.quantity,
             "price": item.price
         }
